@@ -9,28 +9,34 @@ const cors = require('cors');
 app.use(cors());
 
 const socketIO = require('socket.io')(http, {
-    cors: {
-        origin: '*',
-    }
+  cors: {
+    origin: '*',
+  }
 });
 
-const activeUsers = new Map(); // Create a Map to store the active users and their socket ids
+const activeUsers = new Map();
 
 socketIO.on('connection', (socket) => {
-    socket.on('newUser', (username) => {
-      console.log(`user ${username} just connected!`);
-      // Store the username with the socket id in a Map
-      activeUsers.set(socket.id, username);
-      socket.broadcast.emit('userJoined', { [socket.id]: username } );
-    });
-  
-    socket.on('disconnect', () => {
-      const username = activeUsers.get(socket.id); // Retrieve the username associated with the socket id
-      console.log(`user ${username} disconnected`);
-      // Remove the username associated with the socket id when the user disconnects
-      activeUsers.delete(socket.id);
-    });
+  socket.on('newUser', (username) => {
+    console.log(`user ${username} just connected!`);
+
+    activeUsers.set(socket.id, username);
+    socket.broadcast.emit('userJoined', { [socket.id]: username } );
   });
+
+  socket.on('message', (msg) => {
+    console.log('Message received:', msg);
+
+    socket.broadcast.emit('message', msg);
+  });
+
+  socket.on('disconnect', () => {
+    const username = activeUsers.get(socket.id);
+    console.log(`user ${username} disconnected`);
+
+    activeUsers.delete(socket.id);
+  });
+});
 
 http.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);

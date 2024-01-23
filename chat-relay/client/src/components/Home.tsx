@@ -1,20 +1,31 @@
-import React, { useState } from "react";
+import { useEffect } from "react";
+import { getSocket } from "../socket";
 import Input from "./Input";
-
-import socketIO from "socket.io-client";
 
 const Home = () => {
   const username = localStorage.getItem("username");
 
+  useEffect(() => {
+    const socket = getSocket();
+
+    socket.on("message", (msg: { id: string; message: string }) => {
+      if (msg.id != socket.id) {
+        console.log(msg);
+      }
+    });
+  }, []);
+
   return (
-    <div>
-      <Input />
-      <h1>Greetings {username}</h1>
-      <div className="msghistory"></div>
-      <div className="channelblock"></div>
-      <div className="userblock"></div>
-      <div className="channeltitle">EMPLACEMENT</div>
-    </div>
+    <>
+      <div>
+        <Input />
+        <h1>Greetings {username}</h1>
+        <div className="msghistory"></div>
+        <div className="channelblock"></div>
+        <div className="userblock"></div>
+        <div className="channeltitle">EMPLACEMENT</div>
+      </div>
+    </>
   );
 };
 

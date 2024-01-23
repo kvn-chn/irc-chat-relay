@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from "react";
-import Img from "../assets/img.png";
-import Attach from "../assets/attach.png";
-import socketIO from "socket.io-client";
+import { useState } from "react";
+import { getSocket } from "../socket";
 
 const Input = () => {
   const [message, setMessage] = useState("");
+  const socket = getSocket();
 
   const sendMessage = () => {
-    // socket.emit("chat message", message);
-    console.log(message);
+    if (message.trim() === "") return;
+    socket.emit("message", { id: socket.id, message: message });
     setMessage("");
   };
 

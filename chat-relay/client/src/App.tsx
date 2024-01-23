@@ -1,6 +1,6 @@
 import "./App.css";
 import { useState } from "react";
-import socketIO from "socket.io-client";
+import { connect, getSocket } from "./socket";
 
 import Home from "./components/Home";
 
@@ -8,11 +8,12 @@ function App() {
   const [username, setUsername] = useState("");
   const [connected, setConnected] = useState(false);
 
-  const handleConnect = async () => {
+  const handleConnect = () => {
     if (username) {
       localStorage.setItem("username", username);
-      const socket = socketIO.connect("http://localhost:4000");
-      await socket.on("connect", () => {
+      connect();
+      const socket = getSocket();
+      socket.on("connect", () => {
         socket.emit("newUser", username);
         setConnected(true);
       });
@@ -22,7 +23,7 @@ function App() {
   };
 
   return (
-    <>
+    <div>
       {!connected && (
         <div>
           <h1>Chat Relay</h1>
@@ -36,7 +37,7 @@ function App() {
         </div>
       )}
       {connected && <Home />}
-    </>
+    </div>
   );
 }
 
