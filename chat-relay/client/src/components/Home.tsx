@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getSocket, disconnect, isConnected } from "../socket";
 import Input from "./Input";
 import App from "../App";
+import { toast } from 'react-toastify';
 
 const Home = () => {
   const [connected, setConnected] = useState(isConnected());
@@ -29,6 +30,8 @@ const Home = () => {
 
   const logOut = () => {
     disconnect();
+    toast.success("Logged out");
+    localStorage.removeItem("username");
     setConnected(isConnected());
   };
 

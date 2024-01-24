@@ -21,12 +21,16 @@ socketIO.on('connection', (socket) => {
 
   }
 
+
   socket.on('newUser', (username) => {
     console.log(`user ${username} just connected!`);
 
     activeUsers.set(socket.id, username);
-    socket.broadcast.emit('userJoined', { [socket.id]: username } );
+    socket.broadcast.emit('userJoined', username );
+    console.log('Current users:', activeUsers);
+    //console.log(`user ${username} broadcast!`);
   });
+
 
   socket.on('message', (msg) => {
     console.log('Message received:', msg);
@@ -36,11 +40,25 @@ socketIO.on('connection', (socket) => {
     else socket.broadcast.emit('message', msg);
   });
 
+  
+  socket.on('typing', (username) => {
+    socket.broadcast.emit('typing', username);
+  })
+
+  
+  socket.on('stopTyping', (username) => {
+    socket.broadcast.emit('stopTyping', username);
+  })
+  
+
   socket.on('disconnect', () => {
     const username = activeUsers.get(socket.id);
     console.log(`user ${username} disconnected`);
 
     activeUsers.delete(socket.id);
+    console.log('Current users:', activeUsers);
+
+    socket.broadcast.emit('userLeft', username );
   });
 });
 

@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { getSocket, connect, isConnected } from "../socket";
 import App from '../App';
+import { toast } from 'react-toastify';
 
 const Login = () => {
 
@@ -16,9 +17,14 @@ const Login = () => {
     
           socket.on("connect", () => {
             socket.emit("newUser", username);
+            toast.success(`${username} connected to server`);
+            socket.on('userJoined', (username) => {
+              console.log(`${username} joined the chat`);
+              toast.success(`${username} joined the chat`);
+            });
           });
         } else alert("Please enter a username");
-    
+        
         setConnected(isConnected());
       };
 
