@@ -1,30 +1,35 @@
 import "./App.css";
-import { useState } from "react";
-import { connect, getSocket } from "./socket";
+import { connect, getSocket, isConnected } from "./socket";
 
 import Home from "./components/Home";
+import { useState } from "react";
 
 function App() {
   const [username, setUsername] = useState("");
-  const [connected, setConnected] = useState(false);
+  const [connected, setConnected] = useState(isConnected());
 
   const handleConnect = () => {
-    if (username) {
-      localStorage.setItem("username", username);
+    if (!connected && username.trim() !== "") {
       connect();
+
       const socket = getSocket();
+      localStorage.setItem("username", username);
+
       socket.on("connect", () => {
         socket.emit("newUser", username);
-        setConnected(true);
       });
-    } else {
-      alert("Please enter a username");
-    }
+    } else alert("Please enter a username");
+
+    setConnected(isConnected());
   };
 
+  if (connected !== isConnected()) {
+    setConnected(isConnected());
+  }
+
   return (
-    <div>
-      {!connected && (
+    <>
+      {!connected ? (
         <div>
           <h1>Chat Relay</h1>
           <input
@@ -35,9 +40,10 @@ function App() {
           />
           <button onClick={handleConnect}>Connect</button>
         </div>
+      ) : (
+        <Home />
       )}
-      {connected && <Home />}
-    </div>
+    </>
   );
 }
 
