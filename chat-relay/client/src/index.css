@@ -55,6 +55,15 @@ button{
   background-color: #09ebe42a;
 }
 
+.logout {
+  z-index: 1;
+  position: fixed;
+  top: 90%;
+  left: 78%;
+  height: 5%;
+  width: 3%;
+}
+
 
 .msgbox{
   z-index: 1;

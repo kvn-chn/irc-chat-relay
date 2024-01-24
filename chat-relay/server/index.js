@@ -17,6 +17,10 @@ const socketIO = require('socket.io')(http, {
 const activeUsers = new Map();
 
 socketIO.on('connection', (socket) => {
+  const command = (cmd) => {
+
+  }
+
   socket.on('newUser', (username) => {
     console.log(`user ${username} just connected!`);
 
@@ -26,8 +30,10 @@ socketIO.on('connection', (socket) => {
 
   socket.on('message', (msg) => {
     console.log('Message received:', msg);
+    if (msg.message[0] === "/") { 
 
-    socket.broadcast.emit('message', msg);
+    }
+    else socket.broadcast.emit('message', msg);
   });
 
   socket.on('disconnect', () => {
