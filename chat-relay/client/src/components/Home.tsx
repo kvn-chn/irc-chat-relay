@@ -8,11 +8,17 @@ const Home = () => {
   useEffect(() => {
     const socket = getSocket();
 
-    socket.on("message", (msg: { id: string; message: string }) => {
+    const handleMessage = (msg: { id: string; message: string }) => {
       if (msg.id != socket.id) {
         console.log(msg);
       }
-    });
+    };
+
+    socket.on("message", handleMessage);
+
+    return () => {
+      socket.off("message", handleMessage);
+    };
   }, []);
 
   return (
