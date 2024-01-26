@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { getSocket, connect, isConnected } from "../socket";
 import App from '../App';
 import { toast } from 'react-toastify';
@@ -23,7 +23,7 @@ const Login = () => {
               toast.success(`${username} joined the chat`);
             });
           });
-        } else alert("Please enter a username");
+        } else toast.error("Please enter a username");
         
         setConnected(isConnected());
       };
@@ -31,15 +31,23 @@ const Login = () => {
   return (
     <>
         {!connected ? (
-        <div>
-          <h1>Chat Relay</h1>
+        <div className="formContainer">
+          <div className="formWrapper">
+          <h1 className="text-3xl font-bold">Chat Relay</h1>
           <input
+            className="m-4 p-2 border border-gray-300 rounded"
             type="text"
             placeholder="Enter your username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
-          <button onClick={handleConnect}>Connect</button>
+          <button 
+            className="m-4 p-2 bg-blue-500 hover:bg-blue-600 text-white rounded" 
+            onClick={handleConnect}
+          >
+            Connect
+          </button>
+        </div>
         </div>
       ) : (
         <App />

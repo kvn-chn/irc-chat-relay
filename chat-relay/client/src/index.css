@@ -143,3 +143,21 @@ button{
   /* color: red; */
   border-bottom: solid black;
 }
+
+.formContainer {
+  /*background-color: #a7bcff;*/
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.formWrapper {
+  background-color: #004949;
+  padding: 20px 60px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
