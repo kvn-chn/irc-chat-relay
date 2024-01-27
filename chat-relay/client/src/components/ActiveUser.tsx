@@ -1,9 +1,26 @@
-import React from 'react'
+import { useState, useEffect } from "react";
+import { getSocket } from "../socket";
 
 const ActiveUser = () => {
-  return (
-    <div className='text-3xl font-bold'>Active Users</div>
-  )
-}
+  const [activeUsers, setActiveUsers] = useState([]);
 
-export default ActiveUser
+  useEffect(() => {
+    const socket = getSocket();
+    socket.on("activeUsers", (data) => {
+      setActiveUsers(data); // Update the state with the received active users
+      console.log(activeUsers);
+    });
+    // Clean up the socket listener when the component is unmounted
+    return () => {
+      socket.off("activeUsers");
+    };
+  }, [setActiveUsers]);
+
+  return (
+    <div>
+      <div className="text-3xl font-bold">Active Users</div>
+    </div>
+  );
+};
+
+export default ActiveUser;

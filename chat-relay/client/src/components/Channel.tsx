@@ -2,7 +2,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 
 const Channel = () => {
-  const [channels, setChannels] = useState([]);
+  const [channels, setChannels] = useState<string[]>([]);
   const [newChannel, setNewChannel] = useState("");
 
   const handleJoinChannel = () => {

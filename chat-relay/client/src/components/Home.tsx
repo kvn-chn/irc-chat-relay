@@ -10,6 +10,7 @@ import Channel from "./Channel";
 const Home = () => {
   const [connected, setConnected] = useState(isConnected());
   const username = localStorage.getItem("username");
+  const [chat, setChat] = useState<{ text: string; user: string }[]>([]);
 
   useEffect(() => {
     const socket = getSocket();
@@ -42,7 +43,7 @@ const Home = () => {
       ]);
     });
 
-    socket.on("message", ({ channel, user, text }) => {
+    socket.on("message", ({ user, text }) => {
       setChat((prevChat) => [...prevChat, { text: `${user}: ${text}`, user }]);
     });
 
@@ -61,7 +62,7 @@ const Home = () => {
   };
 
   return (
-    <>
+    <div>
       {connected ? (
         <div className="flex flex-row bg-black h-[100vh]">
           <div className="w-1/5 m-2 bg-white rounded flex flex-col justify-center">
@@ -97,7 +98,7 @@ const Home = () => {
       ) : (
         <App />
       )}
-    </>
+    </div>
   );
 };
 

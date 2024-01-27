@@ -26,6 +26,7 @@ socketIO.on('connection', (socket) => {
     activeUsers.set(socket.id, username);
     socket.broadcast.emit('userJoined', username );
     console.log('Current users:', activeUsers);
+    socket.broadcast.emit('activeUsers', activeUsers.get(socket.id, username));
   });
 
   socket.on('message', (msg) => {
