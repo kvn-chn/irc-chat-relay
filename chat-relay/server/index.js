@@ -2,7 +2,6 @@ const express = require('express');
 const app = express();
 const PORT = 4000;
 
-//New imports
 const http = require('http').Server(app);
 const cors = require('cors');
 
@@ -25,7 +24,8 @@ socketIO.on('connection', (socket) => {
     console.log(`user ${username} just connected!`);
 
     activeUsers.set(socket.id, username);
-    socket.broadcast.emit('userJoined', { [socket.id]: username } );
+    socket.broadcast.emit('userJoined', username );
+    console.log('Current users:', activeUsers);
   });
 
   socket.on('message', (msg) => {
@@ -36,12 +36,25 @@ socketIO.on('connection', (socket) => {
     else socket.broadcast.emit('message', msg);
   });
 
+  socket.on('typing', (username) => {
+    socket.broadcast.emit('typing', username);
+  })
+
+
+  socket.on('stopTyping', (username) => {
+    socket.broadcast.emit('stopTyping', username);
+  })
+  
   socket.on('disconnect', () => {
     const username = activeUsers.get(socket.id);
     console.log(`user ${username} disconnected`);
 
     activeUsers.delete(socket.id);
+    console.log('Current users:', activeUsers);
+
+    socket.broadcast.emit('userLeft', username );
   });
+  
 });
 
 http.listen(PORT, () => {

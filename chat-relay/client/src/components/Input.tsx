@@ -12,15 +12,21 @@ const Input = () => {
   };
 
   return (
-    <div>
+    <div className="flex justify-center">
       <input
         type="text"
-        className="msgbox"
-        placeholder="type here"
+        className="msgbox m-4 p-2 border border-gray-300 rounded"
+        placeholder="Type here"
         value={message}
-        onChange={(e) => setMessage(e.target.value)}
+        onChange={(e) => {
+          setMessage(e.target.value);
+          socket.emit("typing", socket.id);
+        }}
       ></input>
-      <button className="sendbtn" onClick={sendMessage}>
+      <button
+        className="sendbtn m-4 p-2 bg-blue-500 hover:bg-blue-600 text-white rounded"
+        onClick={sendMessage}
+      >
         Send
       </button>
     </div>
