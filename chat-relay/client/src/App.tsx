@@ -1,5 +1,5 @@
 import "./App.css";
-import { connect, getSocket, isConnected } from "./socket";
+import { isConnected } from "./socket";
 
 import Home from "./components/Home";
 import { useState } from "react";
@@ -12,11 +12,7 @@ function App() {
     setConnected(isConnected());
   }
 
-  return (
-    <>
-      {connected ? <Home /> : <Login />}
-    </>
-  );
+  return <div>{connected ? <Home /> : <Login />}</div>;
 }
 
 export default App;
