@@ -23,7 +23,7 @@ const ChatBody = () => {
           {messages.map((message, index) => (
             <div className="flex flex-wrap">
               <p
-                className="text-wrap border my-1 ml-1 p-1 border-blue-300 rounded-lg bg-blue-200"
+                className="text-wrap hyphens-auto border my-1 ml-1 p-1 border-blue-300 rounded-lg bg-blue-200"
                 key={index}
               >
                 {message}
