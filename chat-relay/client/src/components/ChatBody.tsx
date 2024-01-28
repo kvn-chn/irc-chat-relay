@@ -18,7 +18,7 @@ const ChatBody = () => {
 
   return (
     <>
-      <div className="h-[85vh] w-full bg-white border border-y-black">
+      <div className="h-[85vh] w-full bg-white border border-y-black flex flex-col-reverse">
         <div className="w-[30%] flex flex-col">
           {messages.map((message, index) => (
             <div className="flex flex-wrap">
