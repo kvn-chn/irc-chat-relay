@@ -10,7 +10,6 @@ import Channel from "./Channel";
 const Home = () => {
   const [connected, setConnected] = useState(isConnected());
   const username = localStorage.getItem("username");
-  const [chat, setChat] = useState<{ text: string; user: string }[]>([]);
 
   useEffect(() => {
     const socket = getSocket();
@@ -19,39 +18,9 @@ const Home = () => {
       logOut();
     }
 
-    const handleMessage = (msg: { id: string; message: string }) => {
-      if (msg.id != socket.id) {
-        console.log(msg);
-      }
-    };
-
     socket.on("connect", () => {
       console.log("Connected to server:", socket.id);
     });
-
-    socket.on("userJoined", ({ channel, user }) => {
-      setChat((prevChat) => [
-        ...prevChat,
-        { text: `${user} joined ${channel}`, user: "system" },
-      ]);
-    });
-
-    socket.on("userLeft", ({ channel, user }) => {
-      setChat((prevChat) => [
-        ...prevChat,
-        { text: `${user} left ${channel}`, user: "system" },
-      ]);
-    });
-
-    socket.on("message", ({ user, text }) => {
-      setChat((prevChat) => [...prevChat, { text: `${user}: ${text}`, user }]);
-    });
-
-    socket.on("message", handleMessage);
-
-    return () => {
-      socket.off("message", handleMessage);
-    };
   }, []);
 
   const logOut = () => {
@@ -70,13 +39,13 @@ const Home = () => {
           </div>
 
           <div className="w-3/5 my-2 flex flex-col bg-white rounded justify-center items-start">
-            <div className="flex flex-row items-center">
+            <div className="flex justify-between">
               <h1 className="text-3xl font-bold text-black">
                 Welcome {username}
               </h1>
 
               <button
-                className="mt-2 p-2 bg-red-500 hover:bg-red-700 text-white rounded"
+                className="p-2 bg-red-500 hover:bg-red-700 text-white rounded"
                 onClick={logOut}
               >
                 Logout
@@ -86,7 +55,7 @@ const Home = () => {
             <div className="flex flex-col w-full">
               <ChatBody />
 
-              <div>
+              <div className="p-2">
                 <Input />
               </div>
             </div>

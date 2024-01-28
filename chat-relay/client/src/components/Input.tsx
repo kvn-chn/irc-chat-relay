@@ -7,6 +7,7 @@ const Input = () => {
 
   const sendMessage = () => {
     if (message.trim() === "") return;
+
     socket.emit("message", { id: socket.id, message: message });
     setMessage("");
   };
@@ -15,13 +16,13 @@ const Input = () => {
     <div className="flex justify-center pl-1">
       <input
         type="text"
-        className="msgbox"
+        className="border border-black h-10 w-full rounded-md mr-2 pl-1"
         placeholder="Type here"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
       ></input>
       <button
-        className="sendbtn m-4 p-2 bg-blue-500 hover:bg-blue-600 text-white rounded"
+        className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded"
         onClick={sendMessage}
       >
         Send

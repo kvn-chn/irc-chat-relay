@@ -17,6 +17,7 @@ const Login = () => {
       socket.on("connect", () => {
         socket.emit("newUser", username);
         toast.success(`${username} connected to server`);
+
         socket.on("userJoined", (username) => {
           console.log(`${username} joined the chat`);
           toast.success(`${username} joined the chat`);
