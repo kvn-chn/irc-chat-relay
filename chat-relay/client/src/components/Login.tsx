@@ -28,6 +28,12 @@ const Login = () => {
     setConnected(isConnected());
   };
 
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key !== "Enter") return;
+
+    handleConnect();
+  };
+
   return (
     <>
       {!connected ? (
@@ -40,6 +46,7 @@ const Login = () => {
               type="text"
               placeholder="Enter your username"
               value={username}
+              onKeyDown={handleKeyPress}
               onChange={(e) => setUsername(e.target.value)}
             />
             <div className="flex justify-center mt-3">
