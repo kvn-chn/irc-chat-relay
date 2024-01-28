@@ -20,10 +20,10 @@ socketIO.on('connection', function (socket) {
         console.log('Current users:', activeUsers);
         socket.broadcast.emit('activeUsers', activeUsers.get(socket.id));
     });
-    socket.on('message', function (msg) {
-        console.log('Message received:', msg);
-        if (msg.message[0] === "/") {
-            var command_1 = msg.message.split(' ')[0];
+    socket.on('message', function (data) {
+        console.log('Message received:', data);
+        if (data.message[0] === "/") {
+            var command_1 = data.message.split(' ')[0];
             switch (command_1) {
                 case '/nick':
                 case '/list':
@@ -36,8 +36,10 @@ socketIO.on('connection', function (socket) {
                 default:
             }
         }
-        else
-            socket.broadcast.emit('message', msg);
+        else {
+            socket.emit('message', data);
+            socket.broadcast.emit('message', data);
+        }
     });
     socket.on('typing', function (username) {
         socket.broadcast.emit('typing', username);

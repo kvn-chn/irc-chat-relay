@@ -29,11 +29,11 @@ socketIO.on('connection', (socket) => {
     socket.broadcast.emit('activeUsers', activeUsers.get(socket.id));
   });
 
-  socket.on('message', (msg: { id: string, message: string }) => {
-    console.log('Message received:', msg);
+  socket.on('message', (data: { id: string, message: string }) => {
+    console.log('Message received:', data);
 
-    if (msg.message[0] === "/") { 
-      const command = msg.message.split(' ')[0];
+    if (data.message[0] === "/") { 
+      const command = data.message.split(' ')[0];
 
       switch (command) {
         case '/nick':
@@ -47,7 +47,10 @@ socketIO.on('connection', (socket) => {
         default:
       }
     }
-    else socket.broadcast.emit('message', msg);
+    else {
+      socket.emit('message', data);
+      socket.broadcast.emit('message', data);
+    }
   });
 
   socket.on('typing', (username: string) => {

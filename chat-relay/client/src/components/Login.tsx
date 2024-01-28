@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { getSocket, connect, isConnected } from "../socket";
 import App from "../App";
 import { toast } from "react-toastify";
