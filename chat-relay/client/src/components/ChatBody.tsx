@@ -18,15 +18,19 @@ const ChatBody = () => {
 
   return (
     <>
-      <div className="h-[85vh] w-full bg-white border border-b-black border-t-black">
-        {messages.map((message, index) => (
-          <p
-            className="border w-[30%] my-1 ml-1 p-1 border-blue-300 rounded-lg bg-blue-200"
-            key={index}
-          >
-            {message}
-          </p>
-        ))}
+      <div className="h-[85vh] w-full bg-white border border-y-black">
+        <div className="w-[30%] flex flex-col">
+          {messages.map((message, index) => (
+            <div className="flex flex-wrap">
+              <p
+                className="text-wrap border my-1 ml-1 p-1 border-blue-300 rounded-lg bg-blue-200"
+                key={index}
+              >
+                {message}
+              </p>
+            </div>
+          ))}
+        </div>
 
         <Typing />
       </div>
