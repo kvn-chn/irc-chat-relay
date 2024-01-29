@@ -39,7 +39,7 @@ const ChatBody = () => {
 
   return (
     <>
-      <div className="h-[85vh] w-full bg-white border border-y-black flex flex-col-reverse overflow-scroll">
+      <div className="h-[85vh] w-full bg-white border border-y-black flex flex-col-reverse overflow-x-scroll">
         <div>
           {messages.map((data, index) =>
             data.id != socket.id ? (
