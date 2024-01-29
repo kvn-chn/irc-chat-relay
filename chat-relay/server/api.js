@@ -25,6 +25,7 @@ socketIO.on('connection', function (socket) {
         socket.broadcast.emit('activeUsers', activeUsersArray);
     });
     socket.on('message', function (data) {
+        var _a;
         console.log('Message received:', data);
         if (data.message[0] === "/") {
             var command_1 = data.message.split(' ')[0];
@@ -36,12 +37,32 @@ socketIO.on('connection', function (socket) {
                     activeUsers.set(userId, newUsername);
                     socket.emit('serverResponse', 'Username updated');
                     socket.broadcast.emit('activeUsers', activeUsersArray);
+                    break;
                 case '/list':
                 case '/delete':
                 case '/join':
                 case '/quit':
                 case '/users':
                 case '/msg':
+                    var receiverUsername_1 = data.message.split(' ')[1];
+                    var receiverSocketId = (_a = Array.from(activeUsers.entries()).find(function (_a) {
+                        var id = _a[0], username = _a[1];
+                        return username === receiverUsername_1;
+                    })) === null || _a === void 0 ? void 0 : _a[0];
+                    if (receiverSocketId) {
+                        var receiverSocket = socketIO.sockets.sockets.get(receiverSocketId);
+                        var privateMessage = data.message.split(' ').slice(2).join(' ');
+                        if (receiverSocket) {
+                            receiverSocket.emit('message', { id: data.id, sender: data.sender, message: privateMessage, time: data.time });
+                        }
+                        else {
+                            socket.emit('serverResponse', 'User not found or offline');
+                        }
+                    }
+                    else {
+                        socket.emit('serverResponse', 'User not found');
+                    }
+                    break;
                 case '/help':
                 default:
             }

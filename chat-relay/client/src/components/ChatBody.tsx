@@ -20,7 +20,7 @@ const ChatBody = () => {
     socket.on("message", (data: Data) => {
       console.log(data.time);
       setMessages((prevMessages) => [...prevMessages, data]);
-      console.log('username', data);
+      console.log("username", data);
     });
 
     socket.on("serverResponse", (message) => {
@@ -40,9 +40,9 @@ const ChatBody = () => {
           {messages.map((data, index) =>
             data.id !== socket.id ? (
               <div key={index} className="w-[70%] flex flex-col mt-4 mb-2">
-                <label className="ml-6 text-sm">{data.sender}</label>
-                <div className="flex flex-wrap"> 
-                  <p className="text-lg overflow-hidden break-words border my-1 ml-3 p-3 mt-[-2px] border-blue-300 rounded-3xl bg-blue-200">
+                <label className="ml-6 text-sm mb-[2px]">{data.sender}</label>
+                <div className="flex flex-wrap">
+                  <p className="text-lg overflow-hidden break-words border my-1 ml-3 p-3 mt-[-2px] border-blue-300 rounded-[22px] bg-blue-200">
                     {data.message}
                   </p>
                 </div>
@@ -51,24 +51,21 @@ const ChatBody = () => {
             ) : (
               <div key={index} className="flex justify-end mt-6 mb-2">
                 <div className="w-[70%] justify-end">
-                
                   <div className="flex flex-wrap justify-end">
-                  <p className="text-lg overflow-hidden break-words border my-2 mr-3 p-3 border-blue-300 rounded-[22px] bg-blue-200">
-                    {data.message}
-                  </p>
-                  </div>
-                  
-
-                <div className="flex justify-end mr-5 mt[-2px] ml-6">
-                  <label className="text-sm">{data.time}</label>
+                    <p className="text-lg overflow-hidden break-words border my-2 mr-3 p-3 border-blue-300 rounded-[22px] bg-blue-200">
+                      {data.message}
+                    </p>
                   </div>
 
+                  <div className="flex justify-end mr-5 mt[-2px] ml-6">
+                    <label className="text-sm">{data.time}</label>
+                  </div>
                 </div>
               </div>
             )
           )}
         </div>
-              
+
         <Typing />
       </div>
     </>

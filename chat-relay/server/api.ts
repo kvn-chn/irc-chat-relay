@@ -25,6 +25,7 @@ socketIO.on('connection', (socket) => {
     activeUsers.set(socket.id, username);
     socket.broadcast.emit('userJoined', username);
     console.log('Current users:', activeUsers);
+
     // Convert activeUsers map to an array and emit it to the client
     const activeUsersArray = Array.from(activeUsers.values());
     console.log('Active users array:', activeUsersArray);
@@ -48,13 +49,31 @@ socketIO.on('connection', (socket) => {
 
           socket.emit('serverResponse', 'Username updated');
           socket.broadcast.emit('activeUsers', activeUsersArray);
+          break;
 
         case '/list':
         case '/delete':
         case '/join':
         case '/quit':
         case '/users':
-        case '/msg':
+          case '/msg':
+            const receiverUsername = data.message.split(' ')[1];
+            const receiverSocketId = Array.from(activeUsers.entries()).find(([id, username]) => username === receiverUsername)?.[0];
+          
+            if (receiverSocketId) {
+              const receiverSocket = socketIO.sockets.sockets.get(receiverSocketId);
+              const privateMessage = data.message.split(' ').slice(2).join(' ');
+          
+              if (receiverSocket) {
+                receiverSocket.emit('message', { id: data.id, sender: data.sender, message: privateMessage, time: data.time });
+              } else {
+                socket.emit('serverResponse', 'User not found or offline');
+              }
+            } else {
+              socket.emit('serverResponse', 'User not found');
+            }
+            break;
+
         case '/help':
         default:
       }
