@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { getSocket } from "../socket";
+import attach from "../assets/attach.png";
+import img from "../assets/img.png";
 
 const Input = () => {
   const [message, setMessage] = useState("");
   const socket = getSocket();
+  //const username = localStorage.getItem("username");
 
   const sendMessage = () => {
     if (message.trim() === "") return;
@@ -29,7 +32,7 @@ const Input = () => {
         onChange={(e) => setMessage(e.target.value)}
       ></input>
       <button
-        className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded"
+        className="p-2 px-4 bg-blue-500 hover:bg-blue-600 text-white rounded"
         onClick={sendMessage}
       >
         Send

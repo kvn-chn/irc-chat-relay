@@ -4,17 +4,21 @@ import Typing from "./Typing";
 
 interface Data {
   id: string;
+  sender: string;
   message: string;
 }
+
 
 const ChatBody = () => {
   const [messages, setMessages] = useState<Data[]>([]);
   const socket = getSocket();
 
   useEffect(() => {
+    //localStorage.getItem("username");
     socket.on("message", (data: Data) => {
       console.log(data.id == socket.id);
       setMessages((prevMessages) => [...prevMessages, data]);
+      console.log('username', data);
     });
 
     return () => {
@@ -44,16 +48,17 @@ const ChatBody = () => {
           {messages.map((data, index) =>
             data.id != socket.id ? (
               <div>
-                <div key={index} className="w-[30%] flex flex-wrap">
-                  <p className="hyphens-auto overflow-hidden border my-1 ml-1 p-1 border-blue-300 rounded-lg bg-blue-200">
+                <div key={index} className="w-[40%] flex flex-col mt-4">
+                  <label className="ml-6 text-sm">{data.sender}</label>
+                  <p className="text-lg hyphens-auto overflow-hidden border my-2 ml-3 p-2 mt-[-2px] border-blue-300 rounded-3xl bg-blue-200">
                     {data.message}
                   </p>
                 </div>
               </div>
             ) : (
               <div className="flex justify-end">
-                <div key={index} className="w-[30%] flex flex-wrap justify-end">
-                  <p className="hyphens-auto overflow-hidden border my-1 mr-1 p-1 border-blue-300 rounded-lg bg-blue-200">
+                <div key={index} className="w-[40%] flex flex-wrap justify-end">
+                  <p className="text-lg hyphens-auto overflow-hidden border my-2 mr-3 p-3 border-blue-300 rounded-[22px] bg-blue-200">
                     {data.message}
                   </p>
                 </div>
@@ -61,7 +66,7 @@ const ChatBody = () => {
             )
           )}
         </div>
-
+              
         <Typing />
       </div>
     </>

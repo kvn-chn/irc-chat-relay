@@ -8,13 +8,13 @@ const ActiveUser = () => {
     const socket = getSocket();
     socket.on("activeUsers", (data) => {
       setActiveUsers(data); // Update the state with the received active users
-      console.log(activeUsers);
+      console.log('activeUsers', activeUsers);
     });
     // Clean up the socket listener when the component is unmounted
     return () => {
       socket.off("activeUsers");
     };
-  }, [setActiveUsers]);
+  }, []);
 
   return (
     <div>

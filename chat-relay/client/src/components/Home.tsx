@@ -52,10 +52,10 @@ const Home = () => {
               </button>
             </div>
 
-            <div className="flex flex-col w-full">
+            <div className="mt-2 flex flex-col w-full">
               <ChatBody />
 
-              <div className="p-2">
+              <div className="mt-2 p-2">
                 <Input />
               </div>
             </div>

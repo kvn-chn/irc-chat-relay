@@ -29,7 +29,7 @@ socketIO.on('connection', (socket) => {
     socket.broadcast.emit('activeUsers', activeUsers.get(socket.id));
   });
 
-  socket.on('message', (data: { id: string, message: string }) => {
+  socket.on('message', (data: { id: string, sender?: string, message: string }) => {
     console.log('Message received:', data);
 
     if (data.message[0] === "/") { 
@@ -48,6 +48,8 @@ socketIO.on('connection', (socket) => {
       }
     }
     else {
+      data.sender = activeUsers.get(data.id);
+
       socket.emit('message', data);
       socket.broadcast.emit('message', data);
     }
