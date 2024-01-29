@@ -20,16 +20,19 @@ socketIO.on('connection', (socket) => {
 
   }
 
-  socket.on('newUser', (username: string) => {
-    console.log(`user ${username} just connected!`);
-
+  socket.on('newUser', function (username) {
+    console.log("user ".concat(username, " just connected!"));
     activeUsers.set(socket.id, username);
-    socket.broadcast.emit('userJoined', username );
+    socket.broadcast.emit('userJoined', username);
     console.log('Current users:', activeUsers);
-    socket.broadcast.emit('activeUsers', activeUsers.get(socket.id));
+    // Convert activeUsers map to an array and emit it to the client
+    const activeUsersArray = Array.from(activeUsers.values());
+    console.log('Active users array:', activeUsersArray);
+    socket.emit('activeUsers', activeUsersArray);
+    socket.broadcast.emit('activeUsers', activeUsersArray);
   });
 
-  socket.on('message', (data: { id: string, sender?: string, message: string }) => {
+  socket.on('message', (data: { id: string, sender?: string, receiver?: string, message: string, time: string }) => {
     console.log('Message received:', data);
 
     if (data.message[0] === "/") { 
@@ -37,6 +40,15 @@ socketIO.on('connection', (socket) => {
 
       switch (command) {
         case '/nick':
+          const userId = data.id;
+          const newUsername = data.message.split(' ')[1];
+          const activeUsersArray = Array.from(activeUsers.values());
+
+          activeUsers.set(userId, newUsername);
+
+          socket.emit('serverResponse', 'Username updated');
+          socket.broadcast.emit('activeUsers', activeUsersArray);
+
         case '/list':
         case '/delete':
         case '/join':
@@ -48,6 +60,12 @@ socketIO.on('connection', (socket) => {
       }
     }
     else {
+      const currentTime = new Date();
+      
+      const hours = currentTime.getHours() < 10 ? `0${currentTime.getHours()}` : currentTime.getHours(); 
+      const minutes = currentTime.getMinutes() < 10 ? `0${currentTime.getMinutes()}` : currentTime.getMinutes();
+
+      data.time = `${hours}h${minutes}`; 
       data.sender = activeUsers.get(data.id);
 
       socket.emit('message', data);
@@ -64,15 +82,16 @@ socketIO.on('connection', (socket) => {
     socket.broadcast.emit('stopTyping', username);
   })
   
-  socket.on('disconnect', () => {
+  socket.on('disconnect', function () {
     const username = activeUsers.get(socket.id);
-    console.log(`user ${username} disconnected`);
-
+    console.log("user ".concat(username, " disconnected"));
     activeUsers.delete(socket.id);
     console.log('Current users:', activeUsers);
-
-    socket.broadcast.emit('userLeft', username );
-  });
+    socket.emit('userLeft', username);
+    const activeUsersArray = Array.from(activeUsers.values());
+    socket.emit('activeUsers', activeUsersArray);
+    socket.broadcast.emit('activeUsers', activeUsersArray);
+});
   
 });
 

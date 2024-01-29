@@ -3,9 +3,10 @@ import { getSocket } from "../socket";
 
 const Typing = () => {
   const [isTyping, setIsTyping] = useState(false);
-  const socket = getSocket();
 
   useEffect(() => {
+    const socket = getSocket();
+
     socket.on("typing", (userId) => {
       // Check if the user typing is the current user
       if (userId !== socket.id) {

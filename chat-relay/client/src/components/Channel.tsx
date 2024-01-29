@@ -41,7 +41,7 @@ const Channel = () => {
         </button>
       </div>
 
-      {channels.length > 0 && (
+      {channels.length > 0 && ( 
         <div className="p-3">
           <ul>
             {channels.map((channel, index) => (

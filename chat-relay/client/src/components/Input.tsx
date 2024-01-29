@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { getSocket } from "../socket";
-import attach from "../assets/attach.png";
-import img from "../assets/img.png";
 
 const Input = () => {
   const [message, setMessage] = useState("");

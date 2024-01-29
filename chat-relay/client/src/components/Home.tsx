@@ -16,9 +16,10 @@ const Home = () => {
 
     if (!isConnected()) {
       logOut();
+      socket.emit("disconnect");
     }
 
-    socket.on("connect", () => {
+      socket.on("connect", () => {
       console.log("Connected to server:", socket.id);
     });
   }, []);
@@ -28,6 +29,7 @@ const Home = () => {
     toast.success("Logged out");
     localStorage.removeItem("username");
     setConnected(isConnected());
+
   };
 
   return (

@@ -10,29 +10,32 @@ var socketIO = require('socket.io')(http, {
     }
 });
 var activeUsers = new Map();
-
 socketIO.on('connection', function (socket) {
     var command = function (cmd) {
     };
-
     socket.on('newUser', function (username) {
-      console.log("user ".concat(username, " just connected!"));
-      activeUsers.set(socket.id, username);
-      socket.broadcast.emit('userJoined', username);
-      console.log('Current users:', activeUsers);
-      // Convert activeUsers map to an array and emit it to the client
-      const activeUsersArray = Array.from(activeUsers.values());
-      socket.emit('activeUsers', activeUsersArray);
-      // Alternatively, if you want to broadcast to all clients including the sender
-      // io.emit('activeUsers', activeUsersArray);
+        console.log("user ".concat(username, " just connected!"));
+        activeUsers.set(socket.id, username);
+        socket.broadcast.emit('userJoined', username);
+        console.log('Current users:', activeUsers);
+        // Convert activeUsers map to an array and emit it to the client
+        var activeUsersArray = Array.from(activeUsers.values());
+        console.log('Active users array:', activeUsersArray);
+        socket.emit('activeUsers', activeUsersArray);
+        socket.broadcast.emit('activeUsers', activeUsersArray);
     });
-
     socket.on('message', function (data) {
         console.log('Message received:', data);
         if (data.message[0] === "/") {
             var command_1 = data.message.split(' ')[0];
             switch (command_1) {
                 case '/nick':
+                    var userId = data.id;
+                    var newUsername = data.message.split(' ')[1];
+                    var activeUsersArray = Array.from(activeUsers.values());
+                    activeUsers.set(userId, newUsername);
+                    socket.emit('serverResponse', 'Username updated');
+                    socket.broadcast.emit('activeUsers', activeUsersArray);
                 case '/list':
                 case '/delete':
                 case '/join':
@@ -44,27 +47,30 @@ socketIO.on('connection', function (socket) {
             }
         }
         else {
+            var currentTime = new Date();
+            var hours = currentTime.getHours() < 10 ? "0".concat(currentTime.getHours()) : currentTime.getHours();
+            var minutes = currentTime.getMinutes() < 10 ? "0".concat(currentTime.getMinutes()) : currentTime.getMinutes();
+            data.time = "".concat(hours, "h").concat(minutes);
             data.sender = activeUsers.get(data.id);
-
             socket.emit('message', data);
             socket.broadcast.emit('message', data);
         }
     });
-
     socket.on('typing', function (username) {
         socket.broadcast.emit('typing', username);
     });
-
     socket.on('stopTyping', function (username) {
         socket.broadcast.emit('stopTyping', username);
     });
-
     socket.on('disconnect', function () {
         var username = activeUsers.get(socket.id);
         console.log("user ".concat(username, " disconnected"));
         activeUsers.delete(socket.id);
         console.log('Current users:', activeUsers);
-        socket.broadcast.emit('userLeft', username);
+        socket.emit('userLeft', username);
+        var activeUsersArray = Array.from(activeUsers.values());
+        socket.emit('activeUsers', activeUsersArray);
+        socket.broadcast.emit('activeUsers', activeUsersArray);
     });
 });
 http.listen(PORT, function () {
