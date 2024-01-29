@@ -20,7 +20,7 @@ const Login = () => {
 
         socket.on("userJoined", (username) => {
           console.log(`${username} joined the chat`);
-          toast.success(`${username} joined the chat`);
+          toast.info(`${username} joined the chat`);
         });
       });
     } else toast.error("Please enter a username");
@@ -38,11 +38,11 @@ const Login = () => {
     <>
       {!connected ? (
         <div className="flex flex-col justify-center items-center h-[100vh] bg-gray-100">
-          <div className="flex flex-col bg-white rounded-sm p-10 shadow-md">
+          <div className="flex flex-col bg-white rounded-lg p-10 shadow-md">
             <h1 className="text-3xl font-bold text-center mb-10">Chat Relay</h1>
             <label>Username:</label>
             <input
-              className="p-2 border border-gray-300 rounded"
+              className="my-2 p-2 border border-gray-300 rounded"
               type="text"
               placeholder="Enter your username"
               value={username}

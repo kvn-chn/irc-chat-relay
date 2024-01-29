@@ -16,9 +16,10 @@ const Home = () => {
 
     if (!isConnected()) {
       logOut();
+      socket.emit("disconnect");
     }
 
-    socket.on("connect", () => {
+      socket.on("connect", () => {
       console.log("Connected to server:", socket.id);
     });
   }, []);
@@ -28,6 +29,7 @@ const Home = () => {
     toast.success("Logged out");
     localStorage.removeItem("username");
     setConnected(isConnected());
+
   };
 
   return (
@@ -52,10 +54,10 @@ const Home = () => {
               </button>
             </div>
 
-            <div className="flex flex-col w-full">
+            <div className="mt-2 flex flex-col w-full">
               <ChatBody />
 
-              <div className="p-2">
+              <div className="mt-2 p-2">
                 <Input />
               </div>
             </div>

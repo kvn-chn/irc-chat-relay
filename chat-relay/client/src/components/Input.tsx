@@ -4,6 +4,7 @@ import { getSocket } from "../socket";
 const Input = () => {
   const [message, setMessage] = useState("");
   const socket = getSocket();
+  //const username = localStorage.getItem("username");
 
   const sendMessage = () => {
     if (message.trim() === "") return;
@@ -29,7 +30,7 @@ const Input = () => {
         onChange={(e) => setMessage(e.target.value)}
       ></input>
       <button
-        className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded"
+        className="p-2 px-4 bg-blue-500 hover:bg-blue-600 text-white rounded"
         onClick={sendMessage}
       >
         Send
