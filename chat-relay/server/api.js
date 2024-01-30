@@ -26,6 +26,9 @@ socketIO.on('connection', function (socket) {
     });
     socket.on('message', function (data) {
         var _a;
+        var currentTime = new Date();
+        var hours = currentTime.getHours() < 10 ? "0".concat(currentTime.getHours()) : currentTime.getHours();
+        var minutes = currentTime.getMinutes() < 10 ? "0".concat(currentTime.getMinutes()) : currentTime.getMinutes();
         console.log('Message received:', data);
         if (data.message[0] === "/") {
             var command_1 = data.message.split(' ')[0];
@@ -45,6 +48,7 @@ socketIO.on('connection', function (socket) {
                 case '/users':
                 case '/msg':
                     var receiverUsername_1 = data.message.split(' ')[1];
+                    var senderUsername = activeUsers.get(data.id);
                     var receiverSocketId = (_a = Array.from(activeUsers.entries()).find(function (_a) {
                         var id = _a[0], username = _a[1];
                         return username === receiverUsername_1;
@@ -53,7 +57,10 @@ socketIO.on('connection', function (socket) {
                         var receiverSocket = socketIO.sockets.sockets.get(receiverSocketId);
                         var privateMessage = data.message.split(' ').slice(2).join(' ');
                         if (receiverSocket) {
-                            receiverSocket.emit('message', { id: data.id, sender: data.sender, message: privateMessage, time: data.time });
+                            var time = "".concat(hours, "h").concat(minutes);
+                            var message = { id: data.id, sender: senderUsername, message: privateMessage, receiver: receiverUsername_1, time: time };
+                            socket.emit('message', message);
+                            receiverSocket.emit('message', message);
                         }
                         else {
                             socket.emit('serverResponse', 'User not found or offline');
@@ -68,9 +75,6 @@ socketIO.on('connection', function (socket) {
             }
         }
         else {
-            var currentTime = new Date();
-            var hours = currentTime.getHours() < 10 ? "0".concat(currentTime.getHours()) : currentTime.getHours();
-            var minutes = currentTime.getMinutes() < 10 ? "0".concat(currentTime.getMinutes()) : currentTime.getMinutes();
             data.time = "".concat(hours, "h").concat(minutes);
             data.sender = activeUsers.get(data.id);
             socket.emit('message', data);

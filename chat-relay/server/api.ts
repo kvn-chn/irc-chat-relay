@@ -34,6 +34,11 @@ socketIO.on('connection', (socket) => {
   });
 
   socket.on('message', (data: { id: string, sender?: string, receiver?: string, message: string, time: string }) => {
+    const currentTime = new Date();
+      
+    const hours = currentTime.getHours() < 10 ? `0${currentTime.getHours()}` : currentTime.getHours(); 
+    const minutes = currentTime.getMinutes() < 10 ? `0${currentTime.getMinutes()}` : currentTime.getMinutes();
+
     console.log('Message received:', data);
 
     if (data.message[0] === "/") { 
@@ -58,6 +63,7 @@ socketIO.on('connection', (socket) => {
         case '/users':
           case '/msg':
             const receiverUsername = data.message.split(' ')[1];
+            const senderUsername = activeUsers.get(data.id);
             const receiverSocketId = Array.from(activeUsers.entries()).find(([id, username]) => username === receiverUsername)?.[0];
           
             if (receiverSocketId) {
@@ -65,7 +71,11 @@ socketIO.on('connection', (socket) => {
               const privateMessage = data.message.split(' ').slice(2).join(' ');
           
               if (receiverSocket) {
-                receiverSocket.emit('message', { id: data.id, sender: data.sender, message: privateMessage, time: data.time });
+                const time = `${hours}h${minutes}`;
+                const message = { id: data.id, sender: senderUsername, message: privateMessage, receiver: receiverUsername, time: time };
+                socket.emit('message', message);
+
+                receiverSocket.emit('message', message);
               } else {
                 socket.emit('serverResponse', 'User not found or offline');
               }
@@ -79,11 +89,6 @@ socketIO.on('connection', (socket) => {
       }
     }
     else {
-      const currentTime = new Date();
-      
-      const hours = currentTime.getHours() < 10 ? `0${currentTime.getHours()}` : currentTime.getHours(); 
-      const minutes = currentTime.getMinutes() < 10 ? `0${currentTime.getMinutes()}` : currentTime.getMinutes();
-
       data.time = `${hours}h${minutes}`; 
       data.sender = activeUsers.get(data.id);
 
