@@ -9,6 +9,7 @@ interface Data {
   receiver?: string;
   message: string;
   time: string;
+  isPrivate: boolean;
 }
 
 const ChatBody = () => {
@@ -18,9 +19,8 @@ const ChatBody = () => {
   useEffect(() => {
     //localStorage.getItem("username");
     socket.on("message", (data: Data) => {
-      console.log(data.time);
       setMessages((prevMessages) => [...prevMessages, data]);
-      console.log("username", data);
+      console.log(data.isPrivate);
     });
 
     socket.on("serverResponse", (message) => {
@@ -42,7 +42,11 @@ const ChatBody = () => {
               <div key={index} className="w-[70%] flex flex-col mt-4 mb-2">
                 <label className="ml-6 text-sm mb-[2px]">{data.sender}</label>
                 <div className="flex flex-wrap">
-                  <p className="text-lg overflow-hidden break-words border my-1 ml-3 p-3 mt-[-2px] border-blue-300 rounded-[22px] bg-blue-200">
+                  <p
+                    className={`text-lg overflow-hidden break-words border my-1 ml-3 p-3 mt-[-2px] ${
+                      data.isPrivate ? "italic" : "not-italic"
+                    } border-blue-300 rounded-[22px] bg-blue-200`}
+                  >
                     {data.message}
                   </p>
                 </div>

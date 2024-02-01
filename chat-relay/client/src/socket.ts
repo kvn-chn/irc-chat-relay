@@ -1,7 +1,7 @@
 import socketIO, { Socket } from "socket.io-client";
 
 let socket: Socket;
-let isConnect: boolean = false;
+let isConnect = false;
 
 export const connect = () => {
     if (isConnect) return;

@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var express = require('express');
 var app = express();
 var PORT = 4000;
@@ -58,7 +60,7 @@ socketIO.on('connection', function (socket) {
                         var privateMessage = data.message.split(' ').slice(2).join(' ');
                         if (receiverSocket) {
                             var time = "".concat(hours, "h").concat(minutes);
-                            var message = { id: data.id, sender: senderUsername, message: privateMessage, receiver: receiverUsername_1, time: time };
+                            var message = { id: data.id, sender: senderUsername, message: privateMessage, receiver: receiverUsername_1, time: time, isPrivate: true };
                             socket.emit('message', message);
                             receiverSocket.emit('message', message);
                         }
@@ -72,11 +74,13 @@ socketIO.on('connection', function (socket) {
                     break;
                 case '/help':
                 default:
+                    socket.emit('serverResponse', "Command doesn't exist");
             }
         }
         else {
             data.time = "".concat(hours, "h").concat(minutes);
             data.sender = activeUsers.get(data.id);
+            data.isPrivate = false;
             socket.emit('message', data);
             socket.broadcast.emit('message', data);
         }
@@ -89,13 +93,15 @@ socketIO.on('connection', function (socket) {
     });
     socket.on('disconnect', function () {
         var username = activeUsers.get(socket.id);
-        console.log("user ".concat(username, " disconnected"));
-        activeUsers.delete(socket.id);
-        console.log('Current users:', activeUsers);
-        socket.emit('userLeft', username);
-        var activeUsersArray = Array.from(activeUsers.values());
-        socket.emit('activeUsers', activeUsersArray);
-        socket.broadcast.emit('activeUsers', activeUsersArray);
+        if (username) {
+            var activeUsersArray = Array.from(activeUsers.values());
+            console.log("user ".concat(username, " disconnected"));
+            activeUsers.delete(socket.id);
+            console.log('Current users:', activeUsers);
+            socket.emit('userLeft', username);
+            socket.emit('activeUsers', activeUsersArray);
+            socket.broadcast.emit('activeUsers', activeUsersArray);
+        }
     });
 });
 http.listen(PORT, function () {

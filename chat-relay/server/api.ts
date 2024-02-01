@@ -1,3 +1,5 @@
+import { Socket } from 'socket.io';
+
 const express = require('express');
 const app = express();
 const PORT = 4000;
@@ -7,7 +9,16 @@ const cors = require('cors');
 
 app.use(cors());
 
-const socketIO = require('socket.io')(http, {
+interface Data {
+  id: string;
+  sender?: string;
+  receiver?: string;
+  message: string;
+  time: string;
+  isPrivate: boolean;
+}
+
+const socketIO: Socket = require('socket.io')(http, {
   cors: {
     origin: '*',
   }
@@ -15,7 +26,7 @@ const socketIO = require('socket.io')(http, {
 
 const activeUsers = new Map<string, string>();
 
-socketIO.on('connection', (socket) => {
+socketIO.on('connection', (socket: Socket) => {
   const command = (cmd) => {
 
   }
@@ -33,7 +44,7 @@ socketIO.on('connection', (socket) => {
     socket.broadcast.emit('activeUsers', activeUsersArray);
   });
 
-  socket.on('message', (data: { id: string, sender?: string, receiver?: string, message: string, time: string }) => {
+  socket.on('message', (data: Data) => {
     const currentTime = new Date();
       
     const hours = currentTime.getHours() < 10 ? `0${currentTime.getHours()}` : currentTime.getHours(); 
@@ -61,36 +72,38 @@ socketIO.on('connection', (socket) => {
         case '/join':
         case '/quit':
         case '/users':
-          case '/msg':
-            const receiverUsername = data.message.split(' ')[1];
-            const senderUsername = activeUsers.get(data.id);
-            const receiverSocketId = Array.from(activeUsers.entries()).find(([id, username]) => username === receiverUsername)?.[0];
-          
-            if (receiverSocketId) {
-              const receiverSocket = socketIO.sockets.sockets.get(receiverSocketId);
-              const privateMessage = data.message.split(' ').slice(2).join(' ');
-          
-              if (receiverSocket) {
-                const time = `${hours}h${minutes}`;
-                const message = { id: data.id, sender: senderUsername, message: privateMessage, receiver: receiverUsername, time: time };
-                socket.emit('message', message);
+        case '/msg':
+          const receiverUsername = data.message.split(' ')[1];
+          const senderUsername = activeUsers.get(data.id);
+          const receiverSocketId = Array.from(activeUsers.entries()).find(([id, username]) => username === receiverUsername)?.[0];
+        
+          if (receiverSocketId) {
+            const receiverSocket = socketIO.sockets.sockets.get(receiverSocketId);
+            const privateMessage = data.message.split(' ').slice(2).join(' ');
+        
+            if (receiverSocket) {
+              const time = `${hours}h${minutes}`;
+              const message: Data = { id: data.id, sender: senderUsername, message: privateMessage, receiver: receiverUsername, time: time, isPrivate: true };
+              socket.emit('message', message);
 
-                receiverSocket.emit('message', message);
-              } else {
-                socket.emit('serverResponse', 'User not found or offline');
-              }
+              receiverSocket.emit('message', message);
             } else {
-              socket.emit('serverResponse', 'User not found');
+              socket.emit('serverResponse', 'User not found or offline');
             }
-            break;
+          } else {
+            socket.emit('serverResponse', 'User not found');
+          }
+          break;
 
         case '/help':
         default:
+          socket.emit('serverResponse', "Command doesn't exist");
       }
     }
     else {
       data.time = `${hours}h${minutes}`; 
       data.sender = activeUsers.get(data.id);
+      data.isPrivate = false;
 
       socket.emit('message', data);
       socket.broadcast.emit('message', data);
@@ -108,13 +121,17 @@ socketIO.on('connection', (socket) => {
   
   socket.on('disconnect', function () {
     const username = activeUsers.get(socket.id);
-    console.log("user ".concat(username, " disconnected"));
-    activeUsers.delete(socket.id);
-    console.log('Current users:', activeUsers);
-    socket.emit('userLeft', username);
-    const activeUsersArray = Array.from(activeUsers.values());
-    socket.emit('activeUsers', activeUsersArray);
-    socket.broadcast.emit('activeUsers', activeUsersArray);
+
+    if (username) {
+      const activeUsersArray = Array.from(activeUsers.values());
+
+      console.log("user ".concat(username, " disconnected"));
+      activeUsers.delete(socket.id);
+      console.log('Current users:', activeUsers);
+      socket.emit('userLeft', username);
+      socket.emit('activeUsers', activeUsersArray);
+      socket.broadcast.emit('activeUsers', activeUsersArray);
+    }
 });
   
 });
