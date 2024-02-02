@@ -37,8 +37,8 @@ const Login = () => {
   return (
     <>
       {!connected ? (
-        <div className="flex flex-col justify-center items-center h-[100vh] bg-gray-100">
-          <div className="flex flex-col bg-white rounded-lg p-10 shadow-md">
+        <div className="flex flex-col justify-center items-center h-[100vh] bg-[#03252b]">
+          <div className="flex flex-col bg-[#05323a] rounded-lg p-10 shadow-md">
             <h1 className="text-3xl font-bold text-center mb-10">Chat Relay</h1>
             <label>Username:</label>
             <input

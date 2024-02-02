@@ -35,7 +35,7 @@ const ChatBody = () => {
 
   return (
     <>
-      <div className="h-[85vh] w-full bg-white border border-y-black flex flex-col-reverse overflow-x-scroll">
+      <div className="h-[85vh] w-full bg-neutral-200 text-black dark:text-[#09ebe3] dark:bg-[#043a44] border border-y-black flex flex-col-reverse overflow-x-scroll">
         <div>
           {messages.map((data, index) =>
             data.id !== socket.id ? (
@@ -45,7 +45,7 @@ const ChatBody = () => {
                   <p
                     className={`text-lg overflow-hidden break-words border my-1 ml-3 p-3 mt-[-2px] ${
                       data.isPrivate ? "italic" : "not-italic"
-                    } border-blue-300 rounded-[22px] bg-blue-200`}
+                    } border-[#0a2b03] rounded-[22px] bg-[#2f941a] text-white`}
                   >
                     {data.message}
                   </p>
@@ -56,7 +56,7 @@ const ChatBody = () => {
               <div key={index} className="flex justify-end mt-6 mb-2">
                 <div className="w-[70%] justify-end">
                   <div className="flex flex-wrap justify-end">
-                    <p className="text-lg overflow-hidden break-words border my-2 mr-3 p-3 border-blue-300 rounded-[22px] bg-blue-200">
+                    <p className="text-lg overflow-hidden break-words border my-2 mr-3 p-3 border-[#03252b] rounded-[22px] bg-[#1356bb] text-white">
                       {data.message}
                     </p>
                   </div>

@@ -24,7 +24,7 @@ const Input = () => {
       <input
         type="text"
         onKeyDown={handleKeyPress}
-        className="border border-black h-10 w-full rounded-md mr-2 pl-1"
+        className="border border-black h-10 w-full rounded-md mr-2 pl-1 bg-neutral-300 text-black dark:text-[#09ebe3] dark:bg-[#004449]"
         placeholder="Type here"
         value={message}
         onChange={(e) => setMessage(e.target.value)}

@@ -28,7 +28,7 @@ const Channel = () => {
       <h1 className="flex justify-center text-3xl font-bold">Channels</h1>
       <div className="flex flex-col items-center">
         <input
-          className="mt-7 w-[90%] p-2 border border-gray-300 rounded"
+          className="mt-7 w-[90%] p-2 border border-gray-300 rounded bg-neutral-300 text-black dark:text-[#09ebe3] dark:bg-[#004449]"
           placeholder="Enter Channel Name"
           value={newChannel}
           onChange={handleChannelNameChange}

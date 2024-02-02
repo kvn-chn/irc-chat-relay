@@ -82,7 +82,7 @@ socketIO.on('connection', (socket: Socket) => {
             const privateMessage = data.message.split(' ').slice(2).join(' ');
         
             if (receiverSocket) {
-              const time = `${hours}h${minutes}`;
+              const time = `${hours}:${minutes}`;
               const message: Data = { id: data.id, sender: senderUsername, message: privateMessage, receiver: receiverUsername, time: time, isPrivate: true };
               socket.emit('message', message);
 
@@ -101,7 +101,7 @@ socketIO.on('connection', (socket: Socket) => {
       }
     }
     else {
-      data.time = `${hours}h${minutes}`; 
+      data.time = `${hours}:${minutes}`; 
       data.sender = activeUsers.get(data.id);
       data.isPrivate = false;
 

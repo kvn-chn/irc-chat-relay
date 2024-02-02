@@ -59,7 +59,7 @@ socketIO.on('connection', function (socket) {
                         var receiverSocket = socketIO.sockets.sockets.get(receiverSocketId);
                         var privateMessage = data.message.split(' ').slice(2).join(' ');
                         if (receiverSocket) {
-                            var time = "".concat(hours, "h").concat(minutes);
+                            var time = "".concat(hours, ":").concat(minutes);
                             var message = { id: data.id, sender: senderUsername, message: privateMessage, receiver: receiverUsername_1, time: time, isPrivate: true };
                             socket.emit('message', message);
                             receiverSocket.emit('message', message);
@@ -78,7 +78,7 @@ socketIO.on('connection', function (socket) {
             }
         }
         else {
-            data.time = "".concat(hours, "h").concat(minutes);
+            data.time = "".concat(hours, ":").concat(minutes);
             data.sender = activeUsers.get(data.id);
             data.isPrivate = false;
             socket.emit('message', data);
