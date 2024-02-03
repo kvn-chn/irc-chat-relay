@@ -9,6 +9,7 @@ import Channel from "./Channel";
 
 const Home = () => {
   const [connected, setConnected] = useState(isConnected());
+  const [theme, setTheme] = useState("Dark");
   const username = localStorage.getItem("username");
 
   useEffect(() => {
@@ -32,6 +33,7 @@ const Home = () => {
   };
 
   function toggleTheme() {
+    setTheme((e) => (e === "Dark" ? "Light" : "Dark"));
     document.documentElement.classList.toggle("dark");
   }
 
@@ -44,24 +46,26 @@ const Home = () => {
           </div>
 
           <div className="w-3/5 my-2 flex flex-col text-black dark:text-[#09ebe3] dark:bg-[#05323a] bg-white rounded justify-center items-start">
-            <div className="flex justify-between">
-              <h1 className="text-3xl font-bold text-black">
+            <div className="flex justify-between w-full px-2">
+              <h1 className="text-3xl font-bold text-black dark:text-[#09ebe3]">
                 Welcome {username}
               </h1>
 
-              <button
-                onClick={toggleTheme}
-                className="dark:bg-white dark:text-black bg-[#004449] text-[#09ebe3]"
-              >
-                change theme
-              </button>
+              <div>
+                <button
+                  onClick={toggleTheme}
+                  className="p-2 rounded dark:bg-white dark:text-black bg-[#004449] text-[#09ebe3] mr-2"
+                >
+                  {theme}
+                </button>
 
-              <button
-                className="p-2 bg-red-500 hover:bg-red-700 text-white rounded"
-                onClick={logOut}
-              >
-                Logout
-              </button>
+                <button
+                  className="p-2 bg-red-500 hover:bg-red-700 text-white rounded"
+                  onClick={logOut}
+                >
+                  Logout
+                </button>
+              </div>
             </div>
 
             <div className="mt-2 flex flex-col w-full">
