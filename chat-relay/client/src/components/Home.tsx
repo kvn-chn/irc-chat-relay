@@ -6,10 +6,10 @@ import { toast } from "react-toastify";
 import ChatBody from "./ChatBody";
 import ActiveUser from "./ActiveUser";
 import Channel from "./Channel";
+import ThemeButton from "./ThemeButton";
 
 const Home = () => {
   const [connected, setConnected] = useState(isConnected());
-  const [theme, setTheme] = useState("Dark");
   const username = localStorage.getItem("username");
 
   useEffect(() => {
@@ -32,11 +32,6 @@ const Home = () => {
     setConnected(isConnected());
   };
 
-  function toggleTheme() {
-    setTheme((e) => (e === "Dark" ? "Light" : "Dark"));
-    document.documentElement.classList.toggle("dark");
-  }
-
   return (
     <div>
       {connected ? (
@@ -52,12 +47,7 @@ const Home = () => {
               </h1>
 
               <div>
-                <button
-                  onClick={toggleTheme}
-                  className="p-2 rounded dark:bg-white dark:text-black bg-[#004449] text-[#09ebe3] mr-2"
-                >
-                  {theme}
-                </button>
+                <ThemeButton />
 
                 <button
                   className="p-2 bg-red-500 hover:bg-red-700 text-white rounded"
