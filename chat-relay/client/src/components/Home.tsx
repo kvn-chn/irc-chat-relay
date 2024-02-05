@@ -10,8 +10,51 @@ import Channel from "./Channel";
 const Home = () => {
   const [connected, setConnected] = useState(isConnected());
   const username = localStorage.getItem("username");
+  const [currentChannel, setCurrentChannel] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [mockMessages, setMockMessages] = useState({
+    'channel1': ['Hello', 'Hi', 'How are you?'],
+  });
+
+  const sendMessage = (message: string) => {
+  if (!message || message.trim() === "") return;
+
+  setMessages((prevMessages) => [...prevMessages, message]);
+
+  // Check if the current channel exists in mockMessages
+  if (!mockMessages[currentChannel]) {
+    // If it doesn't, create a new array for that channel
+    setMockMessages(prevMockMessages => ({
+      ...prevMockMessages,
+      [currentChannel]: [],
+    }));
+  }
+
+  // Add the new message to the current channel's messages
+  setMockMessages(prevMockMessages => ({
+    ...prevMockMessages,
+    [currentChannel]: [...prevMockMessages[currentChannel], message],
+  }));
+
+  const socket = getSocket();
+  socket.emit("message", { id: socket.id, message: message });
+}
 
   useEffect(() => {
+    if (currentChannel) {
+      // replace fetchMessages with your API call function
+      /* fetchMessages(currentChannel).then((newMessages) => {
+        setMessages(newMessages);
+      }); */
+      console.log("Current Channel:", mockMessages[currentChannel]);
+      if (mockMessages[currentChannel]) {
+      setMessages(mockMessages[currentChannel]);
+    } else {
+      // If there are no messages, set messages to an empty array
+      setMessages([]);
+    }
+
+    }
     const socket = getSocket();
 
     if (!isConnected()) {
@@ -22,7 +65,12 @@ const Home = () => {
       socket.on("connect", () => {
       console.log("Connected to server:", socket.id);
     });
-  }, []);
+  }, [currentChannel]);
+
+  const handleChannelClick = (channel) => {
+    setCurrentChannel(channel);
+    console.log("Current Channel:", currentChannel);
+  };
 
   const logOut = () => {
     disconnect();
@@ -36,8 +84,13 @@ const Home = () => {
     <div>
       {connected ? (
         <div className="flex flex-row bg-black h-[100vh]">
+<<<<<<< Updated upstream
           <div className="w-1/5 m-2 bg-white rounded flex flex-col justify-center">
             <Channel />
+=======
+          <div className="w-1/5 m-2 text-black dark:text-[#09ebe3] dark:bg-[#03252b] bg-white rounded flex flex-col justify-center">
+            <Channel onChannelClick={handleChannelClick}/>
+>>>>>>> Stashed changes
           </div>
 
           <div className="w-3/5 my-2 flex flex-col bg-white rounded justify-center items-start">
@@ -55,10 +108,10 @@ const Home = () => {
             </div>
 
             <div className="mt-2 flex flex-col w-full">
-              <ChatBody />
+              <ChatBody messages={messages} setMessages={setMessages} />
 
               <div className="mt-2 p-2">
-                <Input />
+                <Input sendMessage={sendMessage}/>
               </div>
             </div>
           </div>

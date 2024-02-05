@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 
-const Channel = () => {
+const Channel = ({ onChannelClick }: { onChannelClick: (channel: string) => void }) => {
   const [channels, setChannels] = useState<string[]>([]);
   const [newChannel, setNewChannel] = useState("");
 
@@ -45,7 +45,7 @@ const Channel = () => {
         <div className="p-3">
           <ul>
             {channels.map((channel, index) => (
-              <li key={index}>{channel}</li>
+              <li key={index} onClick={() => onChannelClick(channel)}>{channel}</li>
             ))}
           </ul>
         </div>

@@ -1,22 +1,16 @@
 import { useState } from "react";
 import { getSocket } from "../socket";
 
-const Input = () => {
+const Input = ({ sendMessage }: { sendMessage: (message: string) => void }) => {
   const [message, setMessage] = useState("");
-  const socket = getSocket();
+  //const socket = getSocket();
   //const username = localStorage.getItem("username");
-
-  const sendMessage = () => {
-    if (message.trim() === "") return;
-
-    socket.emit("message", { id: socket.id, message: message });
-    setMessage("");
-  };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key !== "Enter") return;
 
-    sendMessage();
+    sendMessage(message);
+    setMessage("");
   };
 
   return (
@@ -31,7 +25,10 @@ const Input = () => {
       ></input>
       <button
         className="p-2 px-4 bg-blue-500 hover:bg-blue-600 text-white rounded"
-        onClick={sendMessage}
+        onClick={() => {
+          sendMessage(message);
+          setMessage("");
+        }}
       >
         Send
       </button>
