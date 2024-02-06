@@ -1,13 +1,29 @@
 import { Socket } from 'socket.io';
 
 const express = require('express');
+const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 const app = express();
 const PORT = 4000;
 
 const http = require('http').Server(app);
 const cors = require('cors');
 
-app.use(cors());
+const User = require('./models/User');
+
+const mongoURL = "mongodb+srv://admin:admin@chat-relay.lenbmdx.mongodb.net/?retryWrites=true&w=majority";
+const jwtSecret = 'eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTcwNjY0MTUzNSwiaWF0IjoxNzA2NjQxNTM1fQ.Mj7cixwuIdP6rCNQ_6riQWoXa6WkNPYhoXmXwo4ptVs';
+
+mongoose.connect(mongoURL).then(function () {
+  console.log('Connected to MongoDB');
+});
+
+app.use(express.json());
+
+app.use(cors({
+  origin: '*',
+  credentials: true
+}));
 
 interface Data {
   id: string;
@@ -101,6 +117,11 @@ socketIO.on('connection', (socket: Socket) => {
       }
     }
     else {
+      const currentTime = new Date();
+      
+      const hours = currentTime.getHours() < 10 ? `0${currentTime.getHours()}` : currentTime.getHours(); 
+      const minutes = currentTime.getMinutes() < 10 ? `0${currentTime.getMinutes()}` : currentTime.getMinutes();
+
       data.time = `${hours}:${minutes}`; 
       data.sender = activeUsers.get(data.id);
       data.isPrivate = false;
@@ -121,19 +142,31 @@ socketIO.on('connection', (socket: Socket) => {
   
   socket.on('disconnect', function () {
     const username = activeUsers.get(socket.id);
-
-    if (username) {
-      const activeUsersArray = Array.from(activeUsers.values());
-
-      console.log("user ".concat(username, " disconnected"));
-      activeUsers.delete(socket.id);
-      console.log('Current users:', activeUsers);
-      socket.emit('userLeft', username);
-      socket.emit('activeUsers', activeUsersArray);
-      socket.broadcast.emit('activeUsers', activeUsersArray);
-    }
-});
+    console.log("user ".concat(username, " disconnected"));
+    activeUsers.delete(socket.id);
+    console.log('Current users:', activeUsers);
+    socket.emit('userLeft', username);
+    const activeUsersArray = Array.from(activeUsers.values());
+    socket.emit('activeUsers', activeUsersArray);
+    socket.broadcast.emit('activeUsers', activeUsersArray);
+  });
   
+});
+
+app.post('/register',async (req, res) => {
+  const { username, password } = req.body;
+  try {
+    const createdUser = await User.create({ username, password });
+    jwt.sign({ userId: createdUser._id, username }, jwtSecret, {} ,(err, token) => {
+    if (err) throw err;
+    res.cookie('token', token).status(201).json({
+      id: createdUser._id,
+    });
+  });
+  } catch (err) {
+    if (err) throw err;
+    res.status(500).json({ error: 'Failed to create user' });
+  }
 });
 
 http.listen(PORT, () => {

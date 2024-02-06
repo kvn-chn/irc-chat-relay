@@ -1,17 +1,45 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var express = require('express');
-var app = express();
-var PORT = 4000;
-var http = require('http').Server(app);
-var cors = require('cors');
-app.use(cors());
-var socketIO = require('socket.io')(http, {
-    cors: {
-        origin: '*',
-    }
+
+const express = require('express');
+const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const app = express();
+const PORT = 4000;
+
+const http = require('http').Server(app);
+const cors = require('cors');
+
+const User = require('./models/User');
+
+const mongoURL = "mongodb+srv://admin:admin@jsf-600-chatrelay.ndsyhzz.mongodb.net/?retryWrites=true&w=majority";
+const jwtSecret = 'eyJhbGciOiJIUzI1NiJ9';
+
+mongoose.connect(mongoURL).then(function () {
+  console.log('Connected to MongoDB');
 });
-var activeUsers = new Map();
+
+const bcryptSalt = bcrypt.genSaltSync(10);
+
+app.use(express.json());
+
+app.use(cookieParser());
+
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}));
+
+
+const socketIO = require('socket.io')(http, {
+  cors: {
+    origin: 'http://localhost:5173',
+  }
+});
+
+const activeUsers = new Map();
 socketIO.on('connection', function (socket) {
     var command = function (cmd) {
     };
@@ -102,8 +130,71 @@ socketIO.on('connection', function (socket) {
             socket.emit('activeUsers', activeUsersArray);
             socket.broadcast.emit('activeUsers', activeUsersArray);
         }
-    });
+  });
 });
-http.listen(PORT, function () {
-    console.log("Server listening on ".concat(PORT));
+
+app.get('/profile', (req,res) => {
+  const token = req.cookies?.token;
+  if (token) {
+    jwt.verify(token, jwtSecret, {}, (err, userData) => {
+      if (err) throw err;
+      res.json(userData);
+    });
+  } else {
+    res.status(401).json('no token');
+  }
+});
+
+app.post('/register',async (req, res) => {
+  const { username, password } = req.body;
+  try {
+    const hashedPassword = await bcrypt.hash(password, bcryptSalt);
+    const createdUser = await User.create({ 
+      username, 
+      password: hashedPassword 
+    });
+    jwt.sign({ userId: createdUser._id, username }, jwtSecret, {} ,(err, token) => {
+    if (err) throw err;
+    res.cookie('token', token, {sameSite:'none', secure:true}).status(201).json({
+      id: createdUser._id,
+    });
+  });
+  } catch (err) {
+    if (err) throw err;
+    res.status(500).json({ error: 'Failed to create user' });
+  }
+});
+
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+  try {
+    const user = await User.findOne({username});
+    if (user) {
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        res.status(401).json({ error: 'Invalid credentials' });
+        return;
+      } else {
+        jwt.sign({ userId: user._id, username }, jwtSecret, {}, (err, token) => {
+          if (err) throw err;
+          res.cookie('token', token, {sameSite:'none', secure:true}).status(200).json({
+            id: user._id,
+          });
+        });
+      }
+    } else {
+      res.status(401).json({ error: 'User not found' });
+    }
+  } catch (err) {
+    if (err) throw err;
+    res.status(500).json({ error: 'Failed to log in' });
+  }
+});
+
+app.post('/logout', (req,res) => {
+  res.cookie('token', '',{sameSite:'none', secure:true}).json('ok')
+});
+
+http.listen(PORT, () => {
+  console.log(`Server listening on ${PORT}`);
 });

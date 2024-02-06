@@ -8,10 +8,10 @@ const Typing = () => {
     const socket = getSocket();
 
     socket.on("typing", (userId) => {
-      // Check if the user typing is the current user
+      
       if (userId !== socket.id) {
         setIsTyping(true);
-        setTimeout(() => setIsTyping(false), 3000); // Reset typing indicator after 3 seconds
+        setTimeout(() => setIsTyping(false), 3000);
         console.log("Someone is typing...");
       }
     });

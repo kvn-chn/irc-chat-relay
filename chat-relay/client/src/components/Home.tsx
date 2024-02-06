@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { getSocket, disconnect, isConnected } from "../socket";
 import Input from "./Input";
 import App from "../App";
@@ -7,10 +7,13 @@ import ChatBody from "./ChatBody";
 import ActiveUser from "./ActiveUser";
 import Channel from "./Channel";
 import ThemeButton from "./ThemeButton";
+import axios from "axios";
+import { UserContext } from "./UserContext";
 
 const Home = () => {
   const [connected, setConnected] = useState(isConnected());
-  const username = localStorage.getItem("username");
+  //const username = localStorage.getItem("username");
+  const {username,id,setId,setUsername} = useContext(UserContext);
 
   useEffect(() => {
     const socket = getSocket();
@@ -30,10 +33,17 @@ const Home = () => {
     toast.success("Logged out");
     localStorage.removeItem("username");
     setConnected(isConnected());
+    axios.post('/logout').then(() => {
+      setId(null);
+      setUsername(null);
+    });
+
   };
+ 
+
 
   return (
-    <div>
+    <div className="scrollbar-thin dark:scrollbar-track-[#09ebe42a] dark:scrollbar-thumb-[#09ebe3]">
       {connected ? (
         <div className="flex flex-row bg-black h-[100vh]">
           <div className="w-1/5 m-2 text-black dark:text-[#09ebe3] dark:bg-[#03252b] bg-white rounded flex flex-col justify-center">

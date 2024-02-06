@@ -31,7 +31,7 @@ const ThemeButton = () => {
       className="p-2 rounded dark:bg-white dark:text-black bg-[#004449] text-[#09ebe3] mr-2"
       onClick={changeTheme}
     >
-      {darkTheme ? "Dark" : "Light"}
+      {darkTheme ? "Light mode" : "Dark mode"}
     </button>
   );
 };
