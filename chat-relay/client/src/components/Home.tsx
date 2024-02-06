@@ -7,38 +7,48 @@ import ChatBody from "./ChatBody";
 import ActiveUser from "./ActiveUser";
 import Channel from "./Channel";
 
+interface Data {
+  id: string;
+  sender: string;
+  message: string;
+  time: string;
+}
+
 const Home = () => {
   const [connected, setConnected] = useState(isConnected());
   const username = localStorage.getItem("username");
-  const [currentChannel, setCurrentChannel] = useState(null);
-  const [messages, setMessages] = useState([]);
-  const [mockMessages, setMockMessages] = useState({
-    'channel1': ['Hello', 'Hi', 'How are you?'],
-  });
+  const [currentChannel, setCurrentChannel] = useState<string | null>(null);
+  const [messages, setMessages] = useState<Data[]>([]);
+  const [mockMessages, setMockMessages] = useState<{ [key: string]: string[] }>(
+    {
+      channel1: ["Hello", "Hi", "How are you?"],
+    }
+  );
 
   const sendMessage = (message: string) => {
-  if (!message || message.trim() === "") return;
+    if (!message || message.trim() === "") return;
+    if (currentChannel === null) return;
 
-  setMessages((prevMessages) => [...prevMessages, message]);
+    setMessages((prevMessages) => [...prevMessages, message]);
 
-  // Check if the current channel exists in mockMessages
-  if (!mockMessages[currentChannel]) {
-    // If it doesn't, create a new array for that channel
-    setMockMessages(prevMockMessages => ({
+    // Check if the current channel exists in mockMessages
+    if (!mockMessages[currentChannel]) {
+      // If it doesn't, create a new array for that channel
+      setMockMessages((prevMockMessages) => ({
+        ...prevMockMessages,
+        [currentChannel]: [],
+      }));
+    }
+
+    // Add the new message to the current channel's messages
+    setMockMessages((prevMockMessages) => ({
       ...prevMockMessages,
-      [currentChannel]: [],
+      [currentChannel]: [...prevMockMessages[currentChannel], message],
     }));
-  }
 
-  // Add the new message to the current channel's messages
-  setMockMessages(prevMockMessages => ({
-    ...prevMockMessages,
-    [currentChannel]: [...prevMockMessages[currentChannel], message],
-  }));
-
-  const socket = getSocket();
-  socket.emit("message", { id: socket.id, message: message });
-}
+    const socket = getSocket();
+    socket.emit("message", { id: socket.id, message: message });
+  };
 
   useEffect(() => {
     if (currentChannel) {
@@ -48,12 +58,11 @@ const Home = () => {
       }); */
       console.log("Current Channel:", mockMessages[currentChannel]);
       if (mockMessages[currentChannel]) {
-      setMessages(mockMessages[currentChannel]);
-    } else {
-      // If there are no messages, set messages to an empty array
-      setMessages([]);
-    }
-
+        setMessages(mockMessages[currentChannel]);
+      } else {
+        // If there are no messages, set messages to an empty array
+        setMessages([]);
+      }
     }
     const socket = getSocket();
 
@@ -62,12 +71,12 @@ const Home = () => {
       socket.emit("disconnect");
     }
 
-      socket.on("connect", () => {
+    socket.on("connect", () => {
       console.log("Connected to server:", socket.id);
     });
   }, [currentChannel]);
 
-  const handleChannelClick = (channel) => {
+  const handleChannelClick = (channel: string) => {
     setCurrentChannel(channel);
     console.log("Current Channel:", currentChannel);
   };
@@ -77,20 +86,14 @@ const Home = () => {
     toast.success("Logged out");
     localStorage.removeItem("username");
     setConnected(isConnected());
-
   };
 
   return (
     <div>
       {connected ? (
         <div className="flex flex-row bg-black h-[100vh]">
-<<<<<<< Updated upstream
-          <div className="w-1/5 m-2 bg-white rounded flex flex-col justify-center">
-            <Channel />
-=======
           <div className="w-1/5 m-2 text-black dark:text-[#09ebe3] dark:bg-[#03252b] bg-white rounded flex flex-col justify-center">
-            <Channel onChannelClick={handleChannelClick}/>
->>>>>>> Stashed changes
+            <Channel onChannelClick={handleChannelClick} />
           </div>
 
           <div className="w-3/5 my-2 flex flex-col bg-white rounded justify-center items-start">
@@ -111,7 +114,7 @@ const Home = () => {
               <ChatBody messages={messages} setMessages={setMessages} />
 
               <div className="mt-2 p-2">
-                <Input sendMessage={sendMessage}/>
+                <Input sendMessage={sendMessage} />
               </div>
             </div>
           </div>
