@@ -1,19 +1,19 @@
 import { useEffect, useState, useContext } from "react";
-import { getSocket, disconnect, isConnected } from "../socket";
-import Input from "./Input";
-import App from "../App";
+import { getSocket, disconnect, isConnected } from "./socket";
+import Input from "./components/Input";
+import App from "./App";
 import { toast } from "react-toastify";
-import ChatBody from "./ChatBody";
-import ActiveUser from "./ActiveUser";
-import Channel from "./Channel";
-import ThemeButton from "./ThemeButton";
+import ChatBody from "./components/ChatBody";
+import ActiveUser from "./components/ActiveUser";
+import Channel from "./components/Channel";
+import ThemeButton from "./components/ThemeButton";
 import axios from "axios";
-import { UserContext } from "./UserContext";
+import { UserContext } from "./components/UserContext";
 
-const Home = () => {
+const ChatRooms = () => {
   const [connected, setConnected] = useState(isConnected());
   //const username = localStorage.getItem("username");
-  const {username,id,setId,setUsername} = useContext(UserContext);
+  const { username, id, setId, setUsername } = useContext(UserContext);
 
   useEffect(() => {
     const socket = getSocket();
@@ -33,14 +33,11 @@ const Home = () => {
     toast.success("Logged out");
     localStorage.removeItem("username");
     setConnected(isConnected());
-    axios.post('/logout').then(() => {
+    axios.post("/logout").then(() => {
       setId(null);
       setUsername(null);
     });
-
   };
- 
-
 
   return (
     <div className="scrollbar-thin dark:scrollbar-track-[#09ebe42a] dark:scrollbar-thumb-[#09ebe3]">
@@ -87,4 +84,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default ChatRooms;

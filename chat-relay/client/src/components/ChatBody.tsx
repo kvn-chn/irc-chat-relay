@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { getSocket } from "../socket";
 import Typing from "./Typing";
@@ -9,21 +9,18 @@ interface Data {
   receiver?: string;
   message: string;
   time: string;
+  isPrivate: boolean;
 }
 
-interface Props {
-  messages: Data[];
-  setMessages: (messages: Data[]) => void;
-}
-
-const ChatBody = ({ messages, setMessages }: Props) => {
+const ChatBody = () => {
+  const [messages, setMessages] = useState<Data[]>([]);
   const socket = getSocket();
 
   useEffect(() => {
+    //localStorage.getItem("username");
     socket.on("message", (data: Data) => {
-      console.log(data.time);
-      setMessages((prevMessages: Data[]) => [...prevMessages, data]);
-      console.log("username", data);
+      setMessages((prevMessages) => [...prevMessages, data]);
+      console.log(data.isPrivate);
     });
 
     socket.on("serverResponse", (message) => {
@@ -38,14 +35,18 @@ const ChatBody = ({ messages, setMessages }: Props) => {
 
   return (
     <>
-      <div className="h-[85vh] w-full bg-neutral-200 text-black dark:text-[#09ebe3] dark:bg-[#043a44] border border-y-black flex flex-col-reverse overflow-x-hidden overflow-auto">
+      <div className="h-[85vh] w-full bg-neutral-200 text-black dark:text-[#09ebe3] dark:bg-[#043a44] border border-y-black flex flex-col-reverse -auto overflow-x-hidden scrollbar-thin dark:scrollbar-track-[#09ebe42a] dark:scrollbar-thumb-[#09ebe3]">
         <div>
           {messages.map((data, index) =>
             data.id !== socket.id ? (
               <div key={index} className="w-[70%] flex flex-col mt-4 mb-2">
-                <label className="ml-6 text-sm">{data.sender}</label>
+                <label className="ml-6 text-sm mb-[2px]">{data.sender}</label>
                 <div className="flex flex-wrap">
-                  <p className="text-lg overflow-hidden break-words border my-1 ml-3 p-3 mt-[-2px]border-[#0a2b03] rounded-lg bg-[#2f941a] text-white">
+                  <p
+                    className={`text-lg overflow-hidden break-words border my-1 ml-3 p-3 mt-[-2px] ${
+                      data.isPrivate ? "italic" : "not-italic"
+                    } border-[#0a2b03] rounded-[22px] bg-[#2f941a] text-white`}
+                  >
                     {data.message}
                   </p>
                 </div>

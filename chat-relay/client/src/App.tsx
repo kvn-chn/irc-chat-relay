@@ -6,9 +6,9 @@ import {
 } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Home from "./components/Home";
-import Login from "./components/Login";
-import Register from "./components/Register";
+import Home from "./ChatRooms";
+import Login from "./Login";
+import Register from "./Register";
 
 function App() {
   return (

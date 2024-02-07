@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { getSocket, connect, isConnected } from "../socket";
+import { getSocket, connect, isConnected } from "./socket";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
@@ -16,17 +16,18 @@ const Register = () => {
 
     if (username && password && repeatPassword && password === repeatPassword) {
       if (!connected) {
-        connect().then(() => {
-          const socket = getSocket();
-          localStorage.setItem("username", username);
-          socket.on("connect", () => {
-            socket.emit("newUser", username);
-            toast.success(`${username} connected to server`);
+        connect();
+        const socket = getSocket();
 
-            socket.on("userJoined", (username) => {
-              console.log(`${username} joined the chat`);
-              toast.info(`${username} joined the chat`);
-            });
+        localStorage.setItem("username", username);
+
+        socket.on("connect", () => {
+          socket.emit("newUser", username);
+          toast.success(`${username} connected to server`);
+
+          socket.on("userJoined", (username) => {
+            console.log(`${username} joined the chat`);
+            toast.info(`${username} joined the chat`);
           });
         });
       }
