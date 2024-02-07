@@ -1,4 +1,5 @@
 import { Socket } from 'socket.io';
+import { Server as HttpServer } from 'http';
 
 interface Data {
     id: string;
@@ -9,7 +10,7 @@ interface Data {
     isPrivate: boolean;
   }
 
-const socketSetup = (server) => {
+const socketSetup = (server: HttpServer) => {
     const socketIO: Socket = require('socket.io')(server, {
       cors: {
         origin: '*',
@@ -122,7 +123,6 @@ const socketSetup = (server) => {
         socket.emit('activeUsers', activeUsersArray);
         socket.broadcast.emit('activeUsers', activeUsersArray);
       });
-      
     });
 }
 
