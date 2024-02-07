@@ -2,10 +2,12 @@ import { useState } from "react";
 import { getSocket, connect, isConnected } from "../socket";
 import App from "../App";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [connected, setConnected] = useState(isConnected());
+  const navigate = useNavigate();
 
   const handleConnect = () => {
     if (!connected && username.trim() !== "") {
@@ -33,22 +35,48 @@ const Login = () => {
     handleConnect();
   };
 
+  const navigateToRegister = () => {
+    navigate("/register");
+  };
+
   return (
     <>
       {!connected ? (
         <div className="flex flex-col justify-center items-center h-[100vh] bg-[#03252b]">
           <div className="flex flex-col bg-[#05323a] rounded-lg p-10 shadow-md">
-            <h1 className="text-3xl font-bold text-center mb-10">Chat Relay</h1>
+            <h1 className="text-3xl font-bold text-white text-center mb-10">
+              Login
+            </h1>
+
             <label>Username:</label>
             <input
-              className="my-2 p-2 border border-gray-300 rounded"
+              className="mb-3 p-2 border border-gray-300 rounded"
               type="text"
               placeholder="Enter your username"
               value={username}
               onKeyDown={handleKeyPress}
               onChange={(e) => setUsername(e.target.value)}
+              required
             />
-            <div className="flex justify-center mt-3">
+
+            <label>Password:</label>
+            <input
+              className="p-2 border border-gray-300 rounded"
+              type="password"
+              placeholder="Enter your username"
+              value={username}
+              onKeyDown={handleKeyPress}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+            <p
+              className="mb-6 hover:cursor-pointer hover:underline hover:underline-offset-2"
+              onClick={navigateToRegister}
+            >
+              Don't have an account?
+            </p>
+
+            <div className="flex justify-center">
               <button
                 className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded"
                 onClick={handleConnect}
