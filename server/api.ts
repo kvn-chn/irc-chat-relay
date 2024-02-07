@@ -1,17 +1,20 @@
 import { Socket } from 'socket.io';
+import dotenv from "dotenv";
 
 const express = require('express');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const app = express();
-const PORT = 4000;
+
+dotenv.config();
+const PORT = process.env.PORT;
 
 const http = require('http').Server(app);
 const cors = require('cors');
 
 const User = require('./models/User');
 
-const mongoURL = "mongodb+srv://admin:admin@chat-relay.lenbmdx.mongodb.net/?retryWrites=true&w=majority";
+const mongoURL = process.env.MONGO_URL;
 const jwtSecret = 'eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTcwNjY0MTUzNSwiaWF0IjoxNzA2NjQxNTM1fQ.Mj7cixwuIdP6rCNQ_6riQWoXa6WkNPYhoXmXwo4ptVs';
 
 mongoose.connect(mongoURL).then(function () {
