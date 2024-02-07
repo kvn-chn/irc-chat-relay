@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 
 const express = require('express');
 const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
 const app = express();
 
 dotenv.config();
@@ -15,18 +14,20 @@ const cors = require('cors');
 const User = require('./models/User');
 
 const mongoURL = process.env.MONGO_URL;
-const jwtSecret = 'eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTcwNjY0MTUzNSwiaWF0IjoxNzA2NjQxNTM1fQ.Mj7cixwuIdP6rCNQ_6riQWoXa6WkNPYhoXmXwo4ptVs';
 
 mongoose.connect(mongoURL).then(function () {
   console.log('Connected to MongoDB');
 });
 
 app.use(express.json());
-
 app.use(cors({
   origin: '*',
   credentials: true
 }));
+
+const userRoutes = require('./routes/user');
+
+app.use('/user', userRoutes);
 
 interface Data {
   id: string;
@@ -154,22 +155,6 @@ socketIO.on('connection', (socket: Socket) => {
     socket.broadcast.emit('activeUsers', activeUsersArray);
   });
   
-});
-
-app.post('/register',async (req, res) => {
-  const { username, password } = req.body;
-  try {
-    const createdUser = await User.create({ username, password });
-    jwt.sign({ userId: createdUser._id, username }, jwtSecret, {} ,(err, token) => {
-    if (err) throw err;
-    res.cookie('token', token).status(201).json({
-      id: createdUser._id,
-    });
-  });
-  } catch (err) {
-    if (err) throw err;
-    res.status(500).json({ error: 'Failed to create user' });
-  }
 });
 
 http.listen(PORT, () => {
