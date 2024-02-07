@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "strict": true,
+    "esModuleInterop": true,
+    "types": ["node", "express"],
+    "resolveJsonModule": true
+  },
+  "include": ["../server/**/*.ts"],
+  "exclude": ["node_modules"]
+}
