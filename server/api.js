@@ -13,10 +13,6 @@ const mongoURL = process.env.MONGO_URL;
 const app = express();
 const server = http.Server(app);
 
-if (!mongoURL) {
-  throw new Error("MONGO_URL environment variable is not defined");
-}
-
 mongoose.connect(mongoURL).then(function () {
   console.log('Connected to MongoDB');
 });

@@ -12,11 +12,6 @@ const UserSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true
-    },
-    socket_id: {
-        type: String,
-        unique: true,
-        required: true
     }
 }, { timestamps: true });
 
@@ -40,7 +35,7 @@ User.prototype.hashPassword = async function (password) {
 User.prototype.generateToken = function () {
     try {
         const token = jwt.sign(
-            { username: this.username },
+            { userId: this._id, username: this.username },
             secretKey,
             { expiresIn: '1h' }
         );

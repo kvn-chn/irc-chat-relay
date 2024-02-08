@@ -1,9 +1,6 @@
 const express = require('express');
 const User = require('../models/userModel');
-const jwt = require('jsonwebtoken');
 const router = express.Router();
-
-const jwtSecret = 'eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTcwNjY0MTUzNSwiaWF0IjoxNzA2NjQxNTM1fQ.Mj7cixwuIdP6rCNQ_6riQWoXa6WkNPYhoXmXwo4ptVs';
 
 router.post('/register', async (req, res) => {
     try {
@@ -30,19 +27,20 @@ router.post('/register', async (req, res) => {
             });
         }
 
-        const existingUser = await User.findOne({ where: { username } }) 
+        const existingUser = await User.findOne({ username });
         
-        if (existingUser) return res.status(400).json({ message: 'Email already used' });
+        if (existingUser) return res.status(400).json({ message: 'Username already used' });
 
-    
         const createdUser = await User.create({ username, password });
+        const hashedPassword = await createdUser.hashPassword(password);
+    
+        const updatedUser = await User.updateOne({ username: username, password: hashedPassword });
         
-        jwt.sign({ userId: createdUser._id, username }, jwtSecret, {} ,(err, token) => {
-            if (err) throw err;
-            res.cookie('token', token).status(201).json({id: createdUser._id, username: username, password: password });
-        });
+        const token = await createdUser.generateToken();
+
+        res.cookie('token', token, { httpOnly: true }).status(201).json({ message: 'User registered successfully' });
     } catch (err) {
-        console.error(error);
+        console.error(err);
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 });
