@@ -3,6 +3,7 @@ import { getSocket, connect, isConnected } from "./socket";
 import App from "./App";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { login } from "./apiCalls";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -10,22 +11,28 @@ const Login = () => {
   const [connected, setConnected] = useState(isConnected());
   const navigate = useNavigate();
 
-  const handleConnect = () => {
-    if (!connected && username.trim() !== "") {
-      connect();
+  const handleConnect = async () => {
+    if (!connected && username.trim() !== "" && password.trim() !== "") {
+      const { response, data } = await login(username, password);
 
-      const socket = getSocket();
-      localStorage.setItem("username", username);
+      if (response.ok) {
+        connect();
 
-      socket.on("connect", () => {
-        socket.emit("newUser", username);
-        toast.success(`${username} connected to server`);
+        const socket = getSocket();
+        localStorage.setItem("username", username);
 
-        socket.on("userJoined", (username) => {
-          console.log(`${username} joined the chat`);
-          toast.info(`${username} joined the chat`);
+        socket.on("connect", () => {
+          socket.emit("newUser", username);
+          toast.success(`${username} connected to server`);
+
+          socket.on("userJoined", (username) => {
+            console.log(`${username} joined the chat`);
+            toast.info(`${username} joined the chat`);
+          });
         });
-      });
+
+        navigate("/chatrooms");
+      } else toast.error(data.message);
     } else toast.error("Please enter a username");
 
     setConnected(isConnected());

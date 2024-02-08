@@ -8,7 +8,6 @@ const Register = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
-  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -16,12 +15,10 @@ const Register = () => {
 
     if (username && password && repeatPassword && password === repeatPassword) {
       const { response, data } = await register(username, password);
-      console.log({ response, data });
 
       if (response.ok) {
-        setError("");
         navigateToLogin();
-      } else setError(data.message);
+      } else toast.error(data.message);
     } else {
       toast.error("Please enter a username and password");
     }

@@ -13,17 +13,10 @@ export const register = async (username: string, password: string) => {
     return { response, data };
 }
   
-export const login = async (email: string, password: string) => {
-    const saveJwtToCookie = (jwtToken: string) => {
-        const expirationDate = new Date();
-        expirationDate.setTime(expirationDate.getTime() + 60 * 60 * 1000); // 1 hour in milliseconds
-
-        document.cookie = `jwt=${jwtToken}; expires=${expirationDate.toUTCString()}; path=/;`;
-    };
-
-    const response = await fetch("http://localhost:8080/user/login", {
+export const login = async (username: string, password: string) => {
+    const response = await fetch("http://localhost:4000/user/login", {
         method: "POST",
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username, password }),
         headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -31,8 +24,6 @@ export const login = async (email: string, password: string) => {
     });
 
     const data: { message: string, token: string } = await response.json();
-
-    if (response.ok) saveJwtToCookie(data.token);
 
     return { response, data };
 }

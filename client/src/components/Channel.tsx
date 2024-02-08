@@ -41,11 +41,13 @@ const Channel = () => {
         </button>
       </div>
 
-      {channels.length > 0 && ( 
+      {channels.length > 0 && (
         <div className="p-3">
           <ul>
             {channels.map((channel, index) => (
-              <li key={index}>{channel}</li>
+              <li key={index} className="border-b border-gray-100 py-2">
+                {channel}
+              </li>
             ))}
           </ul>
         </div>
