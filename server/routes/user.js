@@ -33,12 +33,13 @@ router.post('/register', async (req, res) => {
 
         const createdUser = await User.create({ username, password });
         const hashedPassword = await createdUser.hashPassword(password);
+        console.log(hashedPassword)
     
-        const updatedUser = await User.updateOne({ username: username, password: hashedPassword });
+        await createdUser.updateOne({ username: username, password: hashedPassword });
         
         const token = await createdUser.generateToken();
 
-        res.cookie('token', token, { httpOnly: true }).status(201).json({ message: 'User registered successfully' });
+        res.cookie('token', token, { httpOnly: true }).status(201).json({ message: 'User registered successfully', token: token });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ message: 'Internal Server Error' });

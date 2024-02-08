@@ -6,7 +6,6 @@ const secretKey = 'eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1
 const UserSchema = new mongoose.Schema({
     username: {
         type: String,
-        unique: true,
         required: true
     },
     password: {

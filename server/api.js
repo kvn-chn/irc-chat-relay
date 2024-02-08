@@ -4,7 +4,6 @@ const cors = require('cors');
 const http = require('http');
 const dotenv = require('dotenv');
 const socketSetup = require('./socketSetup');
-const userRoutes = require('./routes/user');
 
 dotenv.config();
 const PORT = process.env.PORT || 4000;
@@ -17,9 +16,13 @@ mongoose.connect(mongoURL).then(function () {
   console.log('Connected to MongoDB');
 });
 
+const userRoutes = require('./routes/user');
+const verifyToken = require('./routes/verifyToken');
+
 app.use(express.json());
 app.use(cors({ origin: '*', credentials: true }));
 app.use('/user', userRoutes);
+app.use('/verifyToken', verifyToken);
 
 socketSetup(server);
 
