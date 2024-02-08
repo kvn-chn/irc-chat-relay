@@ -39,7 +39,7 @@ User.prototype.generateToken = function () {
         const token = jwt.sign(
             { userId: this._id, username: this.username },
             secretKey,
-            { expiresIn: '1h' }
+            { expiresIn: '3h' }
         );
 
         return token;
