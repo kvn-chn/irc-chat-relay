@@ -1,37 +1,27 @@
 import React, { useState } from "react";
-import { getSocket, connect, isConnected } from "./socket";
+import { getSocket, connect } from "./socket";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { register } from "./apiCalls";
 
 const Register = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const [connected, setConnected] = useState(isConnected());
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (username && password && repeatPassword && password === repeatPassword) {
-      if (!connected) {
-        connect();
-        const socket = getSocket();
+      const { response, data } = await register(username, password);
+      console.log({ response, data });
 
-        localStorage.setItem("username", username);
-
-        socket.on("connect", () => {
-          socket.emit("newUser", username);
-          toast.success(`${username} connected to server`);
-
-          socket.on("userJoined", (username) => {
-            console.log(`${username} joined the chat`);
-            toast.info(`${username} joined the chat`);
-          });
-        });
-      }
-      setConnected(isConnected());
+      if (response.ok) {
+        setError("");
+        navigateToLogin();
+      } else setError(data.message);
     } else {
       toast.error("Please enter a username and password");
     }
