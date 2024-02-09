@@ -9,11 +9,14 @@ import Channel from "./components/Channel";
 import ThemeButton from "./components/ThemeButton";
 import axios from "axios";
 import { UserContext } from "./components/UserContext";
+import { useNavigate } from "react-router-dom";
 
 const ChatRooms = () => {
   const [connected, setConnected] = useState(isConnected());
   //const username = localStorage.getItem("username");
   const { username, id, setId, setUsername } = useContext(UserContext);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const socket = getSocket();
@@ -33,10 +36,11 @@ const ChatRooms = () => {
     toast.success("Logged out");
     localStorage.removeItem("username");
     setConnected(isConnected());
-    axios.post("/logout").then(() => {
+    navigate("/");
+    /*axios.post("/logout").then(() => {
       setId(null);
       setUsername(null);
-    });
+    });*/
   };
 
   return (
