@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { getSocket, connect, isConnected } from "./socket";
-import App from "./App";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { login } from "./apiCalls";
@@ -94,9 +93,7 @@ const Login = () => {
             </div>
           </div>
         </div>
-      ) : (
-        <App />
-      )}
+      ) : null}
     </>
   );
 };

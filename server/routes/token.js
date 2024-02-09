@@ -7,23 +7,16 @@ const dotenv = require('dotenv');
 dotenv.config();
 const secretKey = process.env.SECRETKEY;
 
-router.post('/', async (req, res) => {
-    const { token } = req.body;
-
-    if (!token) {
-        return res.status(401).json({ message: 'Token not provided' });
-    }
-  
+router.get('/verify', async (req, res) => {
+    const token = req.cookies.token;
+    
+    if (!token) return res.status(401).json({ message: 'Token not provided' });
+    
     try {
         const decoded = jwt.verify(token, secretKey);
+        const user = await User.findById(decoded.userId, { attributes: { exclude: ['password'] } });
 
-        const user = await User.findById(decoded.userId, {
-            attributes: { exclude: ['password'] },
-        });
-
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
+        if (!user) return res.status(404).json({ message: 'User not found' });
 
         return res.status(200).json({ message: 'Token verified', id: user.id, username: user.username });
     } 
@@ -36,6 +29,10 @@ router.post('/', async (req, res) => {
         
         return res.status(401).json({ message: 'Invalid token' });
     }
+});
+
+router.delete('/', async (req, res) => {
+    res.clearCookie('token').status(200).json({ message: 'Token deleted' });
 });
 
 module.exports = router;

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { getSocket, connect } from "./socket";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { register } from "./apiCalls";
@@ -10,7 +9,9 @@ const Register = () => {
   const [repeatPassword, setRepeatPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement> | React.KeyboardEvent<HTMLInputElement>
+  ) => {
     e.preventDefault();
 
     if (username && password && repeatPassword && password === repeatPassword) {
@@ -37,7 +38,9 @@ const Register = () => {
   return (
     <div className="flex flex-col justify-center items-center h-[100vh] bg-[#03252b]">
       <div className="flex flex-col bg-[#05323a] rounded-lg p-8 shadow-md">
-        <h1 className="text-center text-2xl text-white mb-6">Register</h1>
+        <h1 className="text-3xl font-bold text-white text-center mb-10">
+          Register
+        </h1>
 
         <form className="w-64 mx-auto" onSubmit={handleSubmit}>
           <div className="space-y-4">

@@ -4,6 +4,7 @@ const cors = require('cors');
 const http = require('http');
 const dotenv = require('dotenv');
 const socketSetup = require('./socketSetup');
+const cookieParser = require('cookie-parser');
 
 dotenv.config();
 const PORT = process.env.PORT || 4000;
@@ -16,13 +17,16 @@ mongoose.connect(mongoURL).then(function () {
   console.log('Connected to MongoDB');
 });
 
-const userRoutes = require('./routes/user');
-const verifyToken = require('./routes/verifyToken');
+const registerRoutes = require('./routes/register');
+const tokenRoutes = require('./routes/token');
+const loginRoutes = require('./routes/login');
 
 app.use(express.json());
-app.use(cors({ origin: '*', credentials: true }));
-app.use('/user', userRoutes);
-app.use('/verifyToken', verifyToken);
+app.use(cors({ origin: true, credentials: true }));
+app.use(cookieParser());
+app.use('/login', loginRoutes);
+app.use('/register', registerRoutes);
+app.use('/clear', tokenRoutes);
 
 socketSetup(server);
 

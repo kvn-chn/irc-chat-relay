@@ -1,5 +1,5 @@
 export const register = async (username: string, password: string) => {
-    const response = await fetch("http://localhost:4000/user/register", {
+    const response = await fetch("http://localhost:4000/register", {
       method: "POST",
       body: JSON.stringify({ username, password }),
       headers: {
@@ -14,7 +14,7 @@ export const register = async (username: string, password: string) => {
 }
   
 export const login = async (username: string, password: string) => {
-    const response = await fetch("http://localhost:4000/user/login", {
+    const response = await fetch("http://localhost:4000/login", {
         method: "POST",
         body: JSON.stringify({ username, password }),
         headers: {
@@ -28,41 +28,12 @@ export const login = async (username: string, password: string) => {
     return { response, data };
 }
 
-export const checkToken = async () => {
-    const getJwtToken = () => {
-        const cookies = document.cookie.split(';');
-        for (const cookie of cookies) {
-            const [name, value] = cookie.trim().split('=');
-            if (name === 'jwt') {
-            return value;
-            }
-        }
-        return null;
-    };
+export const clearToken = async () => {
+    const response = await fetch("http://localhost:4000/clear", {
+        method: "DELETE"
+    });
 
-    const jwtToken = getJwtToken();
-
-    if (jwtToken) {
-        const response = await fetch("http://localhost:8080/verifyToken", {
-        method: "POST",
-        body: JSON.stringify({ token: jwtToken }),
-        headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-        },
-        });
-
-        const data: { message: string, id: number, email: string } = await response.json();
-
-        return { response, data };
-    }
-
-    const response = { ok: false };
-    const data = { message: "JWT token is absent" };
+    const data: { message: string } = await response.json();
 
     return { response, data };
-};
-
-export const logout = () => {
-    document.cookie = 'jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
 }

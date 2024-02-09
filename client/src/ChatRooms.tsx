@@ -1,19 +1,17 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import { getSocket, disconnect, isConnected } from "./socket";
 import Input from "./components/Input";
-import App from "./App";
 import { toast } from "react-toastify";
 import ChatBody from "./components/ChatBody";
 import ActiveUser from "./components/ActiveUser";
 import Channel from "./components/Channel";
 import ThemeButton from "./components/ThemeButton";
-import axios from "axios";
-import { UserContext } from "./components/UserContext";
+import { useNavigate } from "react-router-dom";
+import { clearToken } from "./apiCalls";
 
 const ChatRooms = () => {
   const [connected, setConnected] = useState(isConnected());
-  //const username = localStorage.getItem("username");
-  const { username, id, setId, setUsername } = useContext(UserContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const socket = getSocket();
@@ -28,15 +26,19 @@ const ChatRooms = () => {
     });
   }, []);
 
-  const logOut = () => {
-    disconnect();
-    toast.success("Logged out");
-    localStorage.removeItem("username");
-    setConnected(isConnected());
-    axios.post("/logout").then(() => {
-      setId(null);
-      setUsername(null);
-    });
+  const logOut = async () => {
+    const { response, data } = await clearToken();
+
+    if (response.ok) {
+      disconnect();
+      toast.success(data.message);
+      localStorage.removeItem("username");
+      setConnected(isConnected());
+    } else {
+      toast.error(data.message);
+    }
+
+    navigate("/login");
   };
 
   return (
@@ -50,7 +52,7 @@ const ChatRooms = () => {
           <div className="w-3/5 my-2 flex flex-col text-black dark:text-[#09ebe3] dark:bg-[#05323a] bg-white rounded justify-center items-start">
             <div className="flex justify-between w-full px-2">
               <h1 className="text-3xl font-bold text-black dark:text-[#09ebe3]">
-                Welcome {username}
+                Welcome
               </h1>
 
               <div>
@@ -77,9 +79,7 @@ const ChatRooms = () => {
             <ActiveUser />
           </div>
         </div>
-      ) : (
-        <App />
-      )}
+      ) : null}
     </div>
   );
 };
