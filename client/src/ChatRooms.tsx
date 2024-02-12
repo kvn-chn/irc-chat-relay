@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import { getSocket, disconnect, isConnected } from "./socket";
 import Input from "./components/Input";
 import App from "./App";
@@ -7,14 +7,16 @@ import ChatBody from "./components/ChatBody";
 import ActiveUser from "./components/ActiveUser";
 import Channel from "./components/Channel";
 import ThemeButton from "./components/ThemeButton";
-import axios from "axios";
-import { UserContext } from "./components/UserContext";
 import { useNavigate } from "react-router-dom";
 
 const ChatRooms = () => {
   const [connected, setConnected] = useState(isConnected());
-  //const username = localStorage.getItem("username");
-  const { username, id, setId, setUsername } = useContext(UserContext);
+  const username = localStorage.getItem("username");
+  //const { username, id, setId, setUsername } = useContext(UserContext);
+
+  const [selectedChannel, setSelectedChannel] = useState(null);
+
+  const [messages, setMessages] = useState([]);
 
   const navigate = useNavigate();
 
@@ -46,9 +48,9 @@ const ChatRooms = () => {
   return (
     <div className="scrollbar-thin dark:scrollbar-track-[#09ebe42a] dark:scrollbar-thumb-[#09ebe3]">
       {connected ? (
-        <div className="flex flex-row bg-black h-[100vh]">
+        <div className="flex bg-black h-screen">
           <div className="w-1/5 m-2 text-black dark:text-[#09ebe3] dark:bg-[#03252b] bg-white rounded flex flex-col justify-center">
-            <Channel />
+            <Channel selectedChannel={selectedChannel} setSelectedChannel={setSelectedChannel}/>
           </div>
 
           <div className="w-3/5 my-2 flex flex-col text-black dark:text-[#09ebe3] dark:bg-[#05323a] bg-white rounded justify-center items-start">
@@ -70,14 +72,23 @@ const ChatRooms = () => {
             </div>
 
             <div className="mt-2 flex flex-col w-full">
-              <ChatBody />
-
+              <ChatBody 
+                selectedChannel={selectedChannel} 
+                setSelectedChannel={setSelectedChannel}
+                messages={messages}
+                setMessages={setMessages}
+              />
               <div className="mt-2 p-2">
-                <Input />
+                <Input 
+                  selectedChannel={selectedChannel} 
+                  setSelectedChannel={setSelectedChannel}
+                  messages={messages}
+                  setMessages={setMessages}
+                />
               </div>
             </div>
           </div>
-          <div className="w-1/5 m-2 text-black dark:text-[#09ebe3] dark:bg-[#03252b] bg-white rounded flex justify-center">
+          <div className="w-1/5 m-2 text-black dark:text-[#09ebe3] dark:bg-[#03252b] bg-white rounded">
             <ActiveUser />
           </div>
         </div>

@@ -12,15 +12,20 @@ interface Data {
   isPrivate: boolean;
 }
 
-const ChatBody = () => {
-  const [messages, setMessages] = useState<Data[]>([]);
+const ChatBody = ({ selectedChannel, setSelectedChannel, messages, setMessages }: {
+  selectedChannel: string;
+  setSelectedChannel: (channel: string) => void;
+  messages: Data[];
+  setMessages: (messages: Data[]) => void;
+}) => {
+  //const [messages, setMessages] = useState<Data[]>([]);
   const socket = getSocket();
 
   useEffect(() => {
     //localStorage.getItem("username");
     socket.on("message", (data: Data) => {
       setMessages((prevMessages) => [...prevMessages, data]);
-      console.log(data.isPrivate);
+      console.log('data received from socket :', data);
     });
 
     socket.on("serverResponse", (message) => {
@@ -37,36 +42,49 @@ const ChatBody = () => {
     <>
       <div className="h-[85vh] w-full bg-neutral-200 text-black dark:text-[#09ebe3] dark:bg-[#043a44] border border-y-black flex flex-col-reverse -auto overflow-x-hidden scrollbar-thin dark:scrollbar-track-[#09ebe42a] dark:scrollbar-thumb-[#09ebe3]">
         <div>
-          {messages.map((data, index) =>
-            data.id !== socket.id ? (
-              <div key={index} className="w-[70%] flex flex-col mt-4 mb-2">
-                <label className="ml-6 text-sm mb-[2px]">{data.sender}</label>
-                <div className="flex flex-wrap">
-                  <p
-                    className={`text-lg overflow-hidden break-words border my-1 ml-3 p-3 mt-[-2px] ${
-                      data.isPrivate ? "italic" : "not-italic"
-                    } border-[#0a2b03] rounded-[22px] bg-[#2f941a] text-white`}
-                  >
-                    {data.message}
-                  </p>
-                </div>
-                <label className="ml-6 mt[-2px] text-sm">{data.time}</label>
-              </div>
-            ) : (
-              <div key={index} className="flex justify-end mt-6 mb-2">
-                <div className="w-[70%] justify-end">
-                  <div className="flex flex-wrap justify-end">
-                    <p className="text-lg overflow-hidden break-words border my-2 mr-3 p-3 border-[#03252b] rounded-lg bg-[#1356bb] text-white">
+          
+          {!selectedChannel && (
+            <div className="flex justify-center items-center h-[85vh]">
+              <h1 className="text-3xl font-bold text-black dark:text-[#09ebe3]">
+                Select a channel to start chatting
+              </h1>
+            </div>
+          )}
+          
+          {selectedChannel && (
+            <>
+            {messages.map((data, index) =>
+              data.id !== socket.id ? (
+                <div key={index} className="w-[70%] flex flex-col mt-4 mb-2">
+                  <label className="ml-6 text-sm mb-[2px]">{data.sender}</label>
+                  <div className="flex flex-wrap">
+                    <p
+                      className={`text-lg overflow-hidden break-words border my-1 ml-3 p-3 mt-[-2px] ${
+                        data.isPrivate ? "italic" : "not-italic"
+                      } border-[#0a2b03] rounded-[22px] bg-[#2f941a] text-white`}
+                    >
                       {data.message}
                     </p>
                   </div>
+                  <label className="ml-6 mt[-2px] text-sm">{data.time}</label>
+                </div>
+              ) : (
+                <div key={index} className="flex justify-end mt-6 mb-2">
+                  <div className="w-[70%] justify-end">
+                    <div className="flex flex-wrap justify-end">
+                      <p className="text-lg overflow-hidden break-words border my-2 mr-3 p-3 border-[#03252b] rounded-[22px] bg-[#1356bb] text-white">
+                        {data.message}
+                      </p>
+                    </div>
 
-                  <div className="flex justify-end mr-5 mt[-2px] ml-6">
-                    <label className="text-sm">{data.time}</label>
+                    <div className="flex justify-end mr-5 mt[-2px] ml-6">
+                      <label className="text-sm">{data.time}</label>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )
+              )
+            )}
+          </>
           )}
         </div>
 

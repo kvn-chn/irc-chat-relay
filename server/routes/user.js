@@ -72,6 +72,7 @@ router.post('/login', async (req, res) => {
         }
 
         const existingUser = await User.findOne({ username });
+        console.log('existingUser',existingUser);
         
         if (!existingUser) return res.status(404).json({ message: 'Account does not exist' });
 
@@ -88,4 +89,9 @@ router.post('/login', async (req, res) => {
     }
 });
 
-module.exports = router;
+function getUser(username) {
+    const user = User.findOne({ username });
+    return user;
+}
+
+module.exports = { router, getUser };

@@ -16,13 +16,15 @@ mongoose.connect(mongoURL).then(function () {
   console.log('Connected to MongoDB');
 });
 
-const userRoutes = require('./routes/user');
+const { router } = require('./routes/user');
 const verifyToken = require('./routes/verifyToken');
+const messageRoutes = require('./routes/message');
 
 app.use(express.json());
 app.use(cors({ origin: '*', credentials: true }));
-app.use('/user', userRoutes);
+app.use('/user', router);
 app.use('/verifyToken', verifyToken);
+app.use('/message', messageRoutes);
 
 socketSetup(server);
 

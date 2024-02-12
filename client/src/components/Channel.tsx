@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 
-const Channel = () => {
+const Channel = ({selectedChannel, setSelectedChannel}) => {
   const [channels, setChannels] = useState<string[]>([]);
   const [newChannel, setNewChannel] = useState("");
+  //const [selectedChannel, setSelectedChannel] = useState(null);
 
   const handleJoinChannel = () => {
     const channelName = newChannel.trim();
@@ -22,6 +23,11 @@ const Channel = () => {
   const handleChannelNameChange = (e: { target: { value: string } }) => {
     setNewChannel(e.target.value);
   };
+
+  function selectChannel(channel: string) {
+    setSelectedChannel(channel);
+    console.log("Selected channel:", channel);
+  }
 
   return (
     <div className="flex flex-col">
@@ -42,14 +48,19 @@ const Channel = () => {
       </div>
 
       {channels.length > 0 && (
-        <div className="p-3">
-          <ul>
-            {channels.map((channel, index) => (
-              <li key={index} className="border-b border-gray-100 py-2">
-                {channel}
-              </li>
-            ))}
-          </ul>
+        <div className="pl-4 pt-4">
+          {channels.map((channel, index) => (
+            <div
+              key={index}
+              className={`border-b border-gray-100 py-2 dark:border-gray-600 cursor-pointer 
+                ${selectedChannel === channel ? 
+                  "bg-blue-100 dark:bg-[#004449]" : 
+                  "hover:bg-blue-100 dark:hover:bg-[#004449] "}`}
+              onClick={() => selectChannel(channel)}
+            >
+              {channel}
+            </div>
+          ))}
         </div>
       )}
     </div>

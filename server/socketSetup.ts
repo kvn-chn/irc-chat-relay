@@ -1,14 +1,16 @@
 import { Socket } from 'socket.io';
-import { Server as HttpServer } from 'http';
+import { Server as HttpServer, get } from 'http';
+const { getUser } = require('./routes/user');
+const Message = require('./models/messageModel');
 
 interface Data {
-    id: string;
-    sender?: string;
-    receiver?: string;
-    message: string;
-    time: string;
-    isPrivate: boolean;
-  }
+  id: string;
+  sender?: string;
+  receiver?: string;
+  message: string;
+  time: string;
+  isPrivate: boolean;
+}
 
 const socketSetup = (server: HttpServer) => {
     const socketIO: Socket = require('socket.io')(server, {
@@ -33,7 +35,7 @@ const socketSetup = (server: HttpServer) => {
         socket.broadcast.emit('activeUsers', activeUsersArray);
       });
     
-      socket.on('message', (data: Data) => {
+      socket.on('message', async (data: Data) => {
         const currentTime = new Date();
           
         const hours = currentTime.getHours() < 10 ? `0${currentTime.getHours()}` : currentTime.getHours(); 
@@ -63,6 +65,7 @@ const socketSetup = (server: HttpServer) => {
             case '/users':
             case '/msg':
               const receiverUsername = data.message.split(' ')[1];
+
               const senderUsername = activeUsers.get(data.id);
               const receiverSocketId = Array.from(activeUsers.entries()).find(([id, username]) => username === receiverUsername)?.[0];
             
@@ -72,10 +75,22 @@ const socketSetup = (server: HttpServer) => {
             
                 if (receiverSocket) {
                   const time = `${hours}:${minutes}`;
-                  const message: Data = { id: data.id, sender: senderUsername, message: privateMessage, receiver: receiverUsername, time: time, isPrivate: true };
+                  const message: Data = { id: data.id, sender: senderUsername, message: privateMessage, receiver: receiverUsername, time ,isPrivate: true };
                   socket.emit('message', message);
-    
+
                   receiverSocket.emit('message', message);
+
+
+                  const receiverId = await getUser(receiverUsername);
+                  const senderId = await getUser(senderUsername);
+
+                  await Message.create({
+                    senderId,
+                    receiverId,
+                    message:privateMessage,
+                    isPrivate:true,
+                  })
+
                 } else {
                   socket.emit('serverResponse', 'User not found or offline');
                 }
@@ -98,6 +113,16 @@ const socketSetup = (server: HttpServer) => {
           data.time = `${hours}:${minutes}`; 
           data.sender = activeUsers.get(data.id);
           data.isPrivate = false;
+
+          console.log('typeOf :',typeof(data.id));
+                const senderId = await getUser(data.sender);
+                console.log('userId : ', senderId._id);
+
+                const newData = await Message.create({
+                    senderId:senderId._id,
+                    message:data.message,
+                    isPrivate:data.isPrivate,
+                });
     
           socket.emit('message', data);
           socket.broadcast.emit('message', data);

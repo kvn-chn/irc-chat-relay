@@ -25,7 +25,7 @@ router.post('/', async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        return res.status(200).json({ message: 'Token verified', id: user.id, username: user.username });
+        return res.status(200).json({ message: 'Token verified', id: user._id, username: user.username });
     } 
     catch (error) {
         console.error(error);
