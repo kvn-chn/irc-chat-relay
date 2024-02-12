@@ -73,7 +73,7 @@ const ChatRooms = () => {
                 Welcome
               </h1>
 
-              <div>
+              <div className="flex items-center">
                 <ThemeButton />
 
                 <button
