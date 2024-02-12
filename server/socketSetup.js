@@ -38,6 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var getUser = require('./routes/user').getUser;
 var Message = require('./models/messageModel');
+var Channel = require('./models/channelModel');
 var socketSetup = function (server) {
     var socketIO = require('socket.io')(server, {
         cors: {

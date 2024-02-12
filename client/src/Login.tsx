@@ -11,25 +11,11 @@ const Login = () => {
   const [connected, setConnected] = useState(isConnected());
   const navigate = useNavigate();
 
-  const setCookie = (token: string) => {
-    const date = new Date();
-    const day = 2;
-
-    date.setTime(date.getTime() + day * 24 * 60 * 60 * 1000);
-    const expires = "expires=" + date.toUTCString();
-    document.cookie = "jwt=" + token + ";" + expires + ";path=/";
-  };
-
-  const navigateToChatrooms = () => {
-    navigate("/chatrooms");
-  };
-
   const handleConnect = async () => {
     if (!connected && username.trim() !== "" && password.trim() !== "") {
       const { response, data } = await login(username, password);
 
       if (response.ok) {
-        setCookie(data.token);
         connect();
 
         const socket = getSocket();
@@ -43,9 +29,11 @@ const Login = () => {
             console.log(`${username} joined the chat`);
             toast.info(`${username} joined the chat`);
           });
+
+         localStorage.setItem("userId", data.userId);
         });
 
-        navigateToChatrooms();
+        navigate("/chatrooms");
       } else toast.error(data.message);
     } else toast.error("Please enter a username");
 
@@ -60,6 +48,8 @@ const Login = () => {
   const navigateToRegister = () => {
     navigate("/register");
   };
+
+
 
   return (
     <>

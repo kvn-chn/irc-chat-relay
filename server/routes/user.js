@@ -36,8 +36,10 @@ router.post('/register', async (req, res) => {
         console.log(hashedPassword)
     
         await createdUser.updateOne({ username: username, password: hashedPassword });
+        
+        const token = await createdUser.generateToken();
 
-        return res.status(201).json({ message: 'User registered successfully', token: token });
+        return res.cookie('token', token, { httpOnly: true }).status(201).json({ message: 'User registered successfully', token: token });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ message: 'Internal Server Error' });
@@ -77,7 +79,7 @@ router.post('/login', async (req, res) => {
         if (await existingUser.comparePassword(password)) {
             const token = await existingUser.generateToken();
             
-            return res.cookie('token', token).status(201).json({ message: 'Successfully logged in', token: token });
+            return res.cookie('token', token, { httpOnly: true }).status(201).json({ message: 'Successfully logged in', token: token, userId: existingUser._id });
         }
         return res.status(401).json({ message: "Invalid Username or Password" });
     }
@@ -92,4 +94,9 @@ function getUser(username) {
     return user;
 }
 
-module.exports = { router, getUser };
+function getUserById(id) {
+    const user = User.findById(id);
+    return user;
+}
+
+module.exports = { router, getUser, getUserById };

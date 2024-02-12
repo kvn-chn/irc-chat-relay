@@ -56,7 +56,7 @@ const ChatBody = ({ selectedChannel, setSelectedChannel, messages, setMessages }
             {messages.map((data, index) =>
               data.id !== socket.id ? (
                 <div key={index} className="w-[70%] flex flex-col mt-4 mb-2">
-                  <label className="ml-6 text-sm mb-[2px]">{data.sender}</label>
+                  <label className="ml-5 text-sm mb-[3px]">{data.sender}</label>
                   <div className="flex flex-wrap">
                     <p
                       className={`text-lg overflow-hidden break-words border my-1 ml-3 p-3 mt-[-2px] ${
@@ -66,10 +66,10 @@ const ChatBody = ({ selectedChannel, setSelectedChannel, messages, setMessages }
                       {data.message}
                     </p>
                   </div>
-                  <label className="ml-6 mt[-2px] text-sm">{data.time}</label>
+                  <label className="ml-5 mt[-2px] text-sm">{data.time}</label>
                 </div>
               ) : (
-                <div key={index} className="flex justify-end mt-6 mb-2">
+                <div key={index} className="flex justify-end mt-4 mb-2">
                   <div className="w-[70%] justify-end">
                     <div className="flex flex-wrap justify-end">
                       <p className="text-lg overflow-hidden break-words border my-2 mr-3 p-3 border-[#03252b] rounded-[22px] bg-[#1356bb] text-white">

@@ -2,6 +2,7 @@ import { Socket } from 'socket.io';
 import { Server as HttpServer, get } from 'http';
 const { getUser } = require('./routes/user');
 const Message = require('./models/messageModel');
+const Channel = require('./models/channelModel');
 
 interface Data {
   id: string;
@@ -115,14 +116,15 @@ const socketSetup = (server: HttpServer) => {
           data.isPrivate = false;
 
           console.log('typeOf :',typeof(data.id));
-                const senderId = await getUser(data.sender);
-                console.log('userId : ', senderId._id);
+          
+          const senderId = await getUser(data.sender);
+          console.log('userId : ', senderId._id);
 
-                const newData = await Message.create({
-                    senderId:senderId._id,
-                    message:data.message,
-                    isPrivate:data.isPrivate,
-                });
+          const newData = await Message.create({
+              senderId:senderId._id,
+              message:data.message,
+              isPrivate:data.isPrivate,
+          });
     
           socket.emit('message', data);
           socket.broadcast.emit('message', data);

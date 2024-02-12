@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { createChannel } from "../apiCalls";
 
 const Channel = ({selectedChannel, setSelectedChannel}) => {
   const [channels, setChannels] = useState<string[]>([]);
   const [newChannel, setNewChannel] = useState("");
   //const [selectedChannel, setSelectedChannel] = useState(null);
+  const userId = localStorage.getItem("userId");
 
-  const handleJoinChannel = () => {
+  const handleJoinChannel = async () => {
     const channelName = newChannel.trim();
 
     if (channelName === "") {
@@ -14,10 +16,17 @@ const Channel = ({selectedChannel, setSelectedChannel}) => {
     } else if (channels.includes(channelName)) {
       toast.error(`${channelName} already exists`);
     } else {
-      setChannels([...channels, channelName]);
-      setNewChannel("");
-      toast.success(`Joined ${channelName}`);
-    }
+
+      const { response, data } = await createChannel(channelName, userId );
+
+      if (response.status === 201 || response.status === 400) {
+        setChannels([...channels, channelName]);
+        setNewChannel("");
+        toast.success(`Joined ${channelName}`);
+      } else {
+        toast.error(data.message);
+      }
+    } 
   };
 
   const handleChannelNameChange = (e: { target: { value: string } }) => {

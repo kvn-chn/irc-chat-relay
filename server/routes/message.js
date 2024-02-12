@@ -4,7 +4,7 @@ const router = express.Router();
 
 const verifyToken = require('./verifyToken');
 
-router.get('/messages', verifyToken, async (req, res) => {  
+router.get('/:id', verifyToken, async (req, res) => {  
     try {
         const messages = await Message.find();
         return res.status(200).json(messages);
@@ -15,7 +15,7 @@ router.get('/messages', verifyToken, async (req, res) => {
 }
 );
 
-router.post('/messages', verifyToken, async (req, res) => {
+router.post('/', verifyToken, async (req, res) => {
     try {
         const { senderId, sender, receiver, message, isPrivate } = req.body;
         const newMessage = await Message.create({ senderId, sender, receiver, message, isPrivate });
