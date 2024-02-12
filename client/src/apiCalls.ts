@@ -43,7 +43,7 @@ export const checkToken = async () => {
     const jwtToken = getJwtToken();
 
     if (jwtToken) {
-        const response = await fetch("http://localhost:8080/verifyToken", {
+        const response = await fetch("http://localhost:4000/verifyToken", {
         method: "POST",
         body: JSON.stringify({ token: jwtToken }),
         headers: {
@@ -52,7 +52,7 @@ export const checkToken = async () => {
         },
         });
 
-        const data: { message: string, id: number, email: string } = await response.json();
+        const data: { message: string, id: number, username: string } = await response.json();
 
         return { response, data };
     }
@@ -63,6 +63,6 @@ export const checkToken = async () => {
     return { response, data };
 };
 
-export const logout = () => {
+export const clearCookie = () => {
     document.cookie = 'jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
 }

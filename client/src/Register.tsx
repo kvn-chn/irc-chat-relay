@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { getSocket, connect } from "./socket";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { register } from "./apiCalls";
