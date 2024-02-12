@@ -21,6 +21,16 @@ const ChatRooms = () => {
   useEffect(() => {
     const socket = getSocket();
 
+    if (!isConnected()) {
+      logOut();
+    }
+
+    socket.on("connect", () => {
+      console.log("Connected to server:", socket.id);
+    });
+  }, []);
+
+  useEffect(() => {
     const checkConnect = async () => {
       const { response, data } = await checkToken();
 
@@ -35,16 +45,7 @@ const ChatRooms = () => {
     };
 
     checkConnect();
-
-    if (!isConnected()) {
-      logOut();
-      socket.emit("disconnect");
-    }
-
-    socket.on("connect", () => {
-      console.log("Connected to server:", socket.id);
-    });
-  }, []);
+  });
 
   const logOut = () => {
     disconnect();
