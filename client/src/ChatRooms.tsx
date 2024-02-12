@@ -12,9 +12,11 @@ import { checkToken, clearCookie } from "./apiCalls";
 
 const ChatRooms = () => {
   const [socketConnected, setSocketConnected] = useState(isConnected());
-  const [connected, setConnected] = useState(false);
   const navigate = useNavigate();
   const username = localStorage.getItem("username");
+  const [connected, setConnected] = useState(isConnected());
+  const [selectedChannel, setSelectedChannel] = useState(null);
+  const [messages, setMessages] = useState([]);
 
   useEffect(() => {
     const socket = getSocket();
@@ -26,15 +28,6 @@ const ChatRooms = () => {
 
       if (response.ok && "username" in data && data.username === username) {
         setConnected(true);
-
-        if (!isConnected()) {
-          logOut();
-          socket.emit("disconnect");
-        }
-
-        socket.on("connect", () => {
-          console.log("Connected to server:", socket.id);
-        });
       } else {
         setConnected(false);
         logOut();
@@ -42,6 +35,15 @@ const ChatRooms = () => {
     };
 
     checkConnect();
+
+    if (!isConnected()) {
+      logOut();
+      socket.emit("disconnect");
+    }
+
+    socket.on("connect", () => {
+      console.log("Connected to server:", socket.id);
+    });
   }, []);
 
   const logOut = () => {
@@ -58,7 +60,10 @@ const ChatRooms = () => {
       {socketConnected && connected ? (
         <div className="flex flex-row bg-black h-[100vh]">
           <div className="w-1/5 m-2 text-black dark:text-[#09ebe3] dark:bg-[#03252b] bg-white rounded flex flex-col justify-center">
-            <Channel />
+            <Channel
+              selectedChannel={selectedChannel}
+              setSelectedChannel={setSelectedChannel}
+            />
           </div>
 
           <div className="w-3/5 my-2 flex flex-col text-black dark:text-[#09ebe3] dark:bg-[#05323a] bg-white rounded justify-center items-start">
@@ -80,14 +85,23 @@ const ChatRooms = () => {
             </div>
 
             <div className="mt-2 flex flex-col w-full">
-              <ChatBody />
-
+              <ChatBody
+                selectedChannel={selectedChannel}
+                setSelectedChannel={setSelectedChannel}
+                messages={messages}
+                setMessages={setMessages}
+              />
               <div className="mt-2 p-2">
-                <Input />
+                <Input
+                  selectedChannel={selectedChannel}
+                  setSelectedChannel={setSelectedChannel}
+                  messages={messages}
+                  setMessages={setMessages}
+                />
               </div>
             </div>
           </div>
-          <div className="w-1/5 m-2 text-black dark:text-[#09ebe3] dark:bg-[#03252b] bg-white rounded flex justify-center">
+          <div className="w-1/5 m-2 text-black dark:text-[#09ebe3] dark:bg-[#03252b] bg-white rounded">
             <ActiveUser />
           </div>
         </div>
