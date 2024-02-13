@@ -9,8 +9,8 @@ interface Data {
   sender?: string;
   receiver?: string | null;
   message: string;
-  createdAt: Date;
-  channel:string;
+  createdAt: string;
+  channel: string;
 }
 
 const socketSetup = (server: HttpServer) => {
@@ -77,7 +77,7 @@ const socketSetup = (server: HttpServer) => {
                 const privateMessage = data.message.split(' ').slice(2).join(' ');
             
                 if (receiverSocket) {
-                  const message: Data = { sender: senderUsername, message: privateMessage, receiver: receiverUsername, createdAt: currentTime, channel: data.channel};
+                  const message: Data = { sender: senderUsername, message: privateMessage, receiver: receiverUsername, createdAt: `${currentTime}`, channel: data.channel};
                   socket.emit('message', message);
 
                   receiverSocket.emit('message', message);
@@ -109,12 +109,9 @@ const socketSetup = (server: HttpServer) => {
           }
         }
         else {       
-          console.error('sender :', data.sender);
           const senderId = await getUser(data.sender);
-          console.log('userId : ', senderId._id);
-          console.log('data.channel : ', data.channel);
           const channelId = await getChannel(data.channel);
-          console.log('channelId : ', channelId);
+          data.createdAt = `${currentTime}`;
 
           const newData = await Message.create({
               senderId: senderId._id,
@@ -123,7 +120,7 @@ const socketSetup = (server: HttpServer) => {
           });
 
           console.log('newData :',newData);
-          
+
           socket.emit('message', data);
           socket.broadcast.emit('message', data);
         }

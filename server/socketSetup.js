@@ -104,7 +104,7 @@ var socketSetup = function (server) {
                         receiverSocket = socketIO.sockets.sockets.get(receiverSocketId);
                         privateMessage = data.message.split(' ').slice(2).join(' ');
                         if (!receiverSocket) return [3 /*break*/, 7];
-                        message = { sender: senderUsername, message: privateMessage, receiver: receiverUsername_1, createdAt: currentTime, channel: data.channel };
+                        message = { sender: senderUsername, message: privateMessage, receiver: receiverUsername_1, createdAt: "".concat(currentTime), channel: data.channel };
                         socket.emit('message', message);
                         receiverSocket.emit('message', message);
                         return [4 /*yield*/, getUser(receiverUsername_1)._id];
@@ -138,17 +138,13 @@ var socketSetup = function (server) {
                         socket.emit('serverResponse', "Command doesn't exist");
                         _c.label = 13;
                     case 13: return [3 /*break*/, 18];
-                    case 14:
-                        console.error('sender :', data.sender);
-                        return [4 /*yield*/, getUser(data.sender)];
+                    case 14: return [4 /*yield*/, getUser(data.sender)];
                     case 15:
                         senderId = _c.sent();
-                        console.log('userId : ', senderId._id);
-                        console.log('data.channel : ', data.channel);
                         return [4 /*yield*/, getChannel(data.channel)];
                     case 16:
                         channelId = _c.sent();
-                        console.log('channelId : ', channelId);
+                        data.createdAt = "".concat(currentTime);
                         return [4 /*yield*/, Message.create({
                                 senderId: senderId._id,
                                 message: data.message,

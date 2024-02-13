@@ -11,7 +11,6 @@ router.get('/:channel', async (req, res) => {
         const { channel } = req.params;
         const channelId = await getChannel(channel);
         const messages = await getMessages(channelId._id);
-        console.log(messages);
 
         const messagesWithUserNames = await Promise.all(messages.map(async message => {
             const sender = await getUserById(message.senderId);

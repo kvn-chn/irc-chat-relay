@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { getSocket } from "../socket";
 import Typing from "./Typing";
@@ -7,7 +7,7 @@ interface Data {
   sender?: string;
   receiver?: string | null;
   message: string;
-  createdAt: Date;
+  createdAt: string;
   channel: string;
 }
 
