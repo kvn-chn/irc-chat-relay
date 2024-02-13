@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 
-const Channel = ({selectedChannel, setSelectedChannel}) => {
+const Channel = ({ selectedChannel, setSelectedChannel }) => {
   const [channels, setChannels] = useState<string[]>([]);
   const [newChannel, setNewChannel] = useState("");
   //const [selectedChannel, setSelectedChannel] = useState(null);
@@ -43,7 +43,7 @@ const Channel = ({selectedChannel, setSelectedChannel}) => {
           className="mt-1 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           onClick={handleJoinChannel}
         >
-          Join Channel
+          Create/Join Channel
         </button>
       </div>
 
@@ -53,9 +53,11 @@ const Channel = ({selectedChannel, setSelectedChannel}) => {
             <div
               key={index}
               className={`border-b border-gray-100 py-2 dark:border-gray-600 cursor-pointer 
-                ${selectedChannel === channel ? 
-                  "bg-blue-100 dark:bg-[#004449]" : 
-                  "hover:bg-blue-100 dark:hover:bg-[#004449] "}`}
+                ${
+                  selectedChannel === channel
+                    ? "bg-blue-100 dark:bg-[#004449]"
+                    : "hover:bg-blue-100 dark:hover:bg-[#004449] "
+                }`}
               onClick={() => selectChannel(channel)}
             >
               {channel}
