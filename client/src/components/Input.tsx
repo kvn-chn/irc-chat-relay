@@ -1,15 +1,24 @@
 import { useState } from "react";
 import { getSocket } from "../socket";
 
-const Input = ({ selectedChannel, setSelectedChannel, messages, setMessages }) => {
+const Input = ({
+  selectedChannel,
+  setSelectedChannel,
+  messages,
+  setMessages,
+}) => {
   const [message, setMessage] = useState("");
   const socket = getSocket();
-  //const username = localStorage.getItem("username");
+  const username = localStorage.getItem("username");
 
   const sendMessage = () => {
     if (message.trim() === "") return;
 
-    socket.emit("message", { id: socket.id, message: message, channel: selectedChannel });
+    socket.emit("message", {
+      sender: username,
+      message: message,
+      channel: selectedChannel,
+    });
     setMessage("");
   };
 
@@ -41,6 +50,6 @@ const Input = ({ selectedChannel, setSelectedChannel, messages, setMessages }) =
       )}
     </>
   );
-}
+};
 
 export default Input;

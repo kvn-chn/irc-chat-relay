@@ -50,4 +50,8 @@ function getChannel(channelName) {
     return Channel.findOne({ name: channelName });
 }
 
-module.exports = { channelRoutes, getChannel };
+function getChannelById(channelId) {
+    return Channel.findOne({ _id:channelId });
+}
+
+module.exports = { channelRoutes, getChannel, getChannelById };

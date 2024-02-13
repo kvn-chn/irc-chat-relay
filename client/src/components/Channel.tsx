@@ -2,7 +2,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { createChannel } from "../apiCalls";
 
-const Channel = ({selectedChannel, setSelectedChannel}) => {
+const Channel = ({ selectedChannel, setSelectedChannel }) => {
   const [channels, setChannels] = useState<string[]>([]);
   const [newChannel, setNewChannel] = useState("");
   //const [selectedChannel, setSelectedChannel] = useState(null);
@@ -11,13 +11,11 @@ const Channel = ({selectedChannel, setSelectedChannel}) => {
   const handleJoinChannel = async () => {
     const channelName = newChannel.trim();
 
-    if (channelName === "") {
-      toast.error("Please enter a channel name");
-    } else if (channels.includes(channelName)) {
+    if (channelName.trim() === "") toast.error("Please enter a channel name");
+    else if (channels.includes(channelName))
       toast.error(`${channelName} already exists`);
-    } else {
-
-      const { response, data } = await createChannel(channelName, userId );
+    else {
+      const { response, data } = await createChannel(channelName, userId);
 
       if (response.status === 201 || response.status === 400) {
         setChannels([...channels, channelName]);
@@ -26,7 +24,7 @@ const Channel = ({selectedChannel, setSelectedChannel}) => {
       } else {
         toast.error(data.message);
       }
-    } 
+    }
   };
 
   const handleChannelNameChange = (e: { target: { value: string } }) => {
@@ -61,10 +59,12 @@ const Channel = ({selectedChannel, setSelectedChannel}) => {
           {channels.map((channel, index) => (
             <div
               key={index}
-              className={`border-b my-2 border-gray-100 py-2 px-2 dark:border-gray-600 cursor-pointer rounded
-                ${selectedChannel === channel ? 
-                  "bg-blue-100 dark:bg-[#004449]" : 
-                  "hover:bg-blue-100 dark:hover:bg-[#004449] "}`}
+              className={`border-b my-2 border-gray-100 p-2 dark:border-gray-600 cursor-pointer rounded
+                ${
+                  selectedChannel === channel
+                    ? "bg-blue-100 dark:bg-[#004449]"
+                    : "hover:bg-blue-100 dark:hover:bg-[#004449] "
+                }`}
               onClick={() => selectChannel(channel)}
             >
               {channel}

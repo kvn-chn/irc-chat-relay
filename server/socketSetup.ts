@@ -6,12 +6,10 @@ const Channel = require('./models/channelModel');
 const { getChannel } = require('./routes/channel');
 
 interface Data {
-  id: string;
   sender?: string;
-  receiver?: string;
+  receiver?: string | null;
   message: string;
-  time: string;
-  isPrivate: boolean;
+  createdAt: Date;
   channel:string;
 }
 
@@ -51,14 +49,16 @@ const socketSetup = (server: HttpServer) => {
     
           switch (command) {
             case '/nick':
-              const userId = data.id;
+
+
+              /* const userId = data.id;
               const newUsername = data.message.split(' ')[1];
               const activeUsersArray = Array.from(activeUsers.values());
     
               activeUsers.set(userId, newUsername);
     
               socket.emit('serverResponse', 'Username updated');
-              socket.broadcast.emit('activeUsers', activeUsersArray);
+              socket.broadcast.emit('activeUsers', activeUsersArray); */
               break;
     
             case '/list':
@@ -69,7 +69,7 @@ const socketSetup = (server: HttpServer) => {
             case '/msg':
               const receiverUsername = data.message.split(' ')[1];
 
-              const senderUsername = activeUsers.get(data.id);
+              const senderUsername = data.sender;
               const receiverSocketId = Array.from(activeUsers.entries()).find(([id, username]) => username === receiverUsername)?.[0];
             
               if (receiverSocketId) {
@@ -77,21 +77,20 @@ const socketSetup = (server: HttpServer) => {
                 const privateMessage = data.message.split(' ').slice(2).join(' ');
             
                 if (receiverSocket) {
-                  const time = `${hours}:${minutes}`;
-                  const message: Data = { id: data.id, sender: senderUsername, message: privateMessage, receiver: receiverUsername, time ,isPrivate: true };
+                  const message: Data = { sender: senderUsername, message: privateMessage, receiver: receiverUsername, createdAt: currentTime, channel: data.channel};
                   socket.emit('message', message);
 
                   receiverSocket.emit('message', message);
 
-
-                  const receiverId = await getUser(receiverUsername);
-                  const senderId = await getUser(senderUsername);
+                  const receiverId = await getUser(receiverUsername)._id;
+                  const senderId = await getUser(senderUsername)._id;
+                  const channelId = await getChannel(data.channel)._id;
 
                   await Message.create({
                     senderId,
                     receiverId,
                     message:privateMessage,
-                    isPrivate:true,
+                    channelId
                   })
 
                 } else {
@@ -103,37 +102,28 @@ const socketSetup = (server: HttpServer) => {
               break;
     
             case '/help':
+              break;
+              
             default:
               socket.emit('serverResponse', "Command doesn't exist");
           }
         }
-        else {
-          const currentTime = new Date();
-          
-          const hours = currentTime.getHours() < 10 ? `0${currentTime.getHours()}` : currentTime.getHours(); 
-          const minutes = currentTime.getMinutes() < 10 ? `0${currentTime.getMinutes()}` : currentTime.getMinutes();
-    
-          data.time = `${hours}:${minutes}`; 
-          data.sender = activeUsers.get(data.id);
-          data.isPrivate = false;
-
-          console.log('typeOf :',typeof(data.id));
-          
+        else {       
+          console.error('sender :', data.sender);
           const senderId = await getUser(data.sender);
           console.log('userId : ', senderId._id);
           console.log('data.channel : ', data.channel);
           const channelId = await getChannel(data.channel);
-          console.log('channelId : ', channelId._id);
+          console.log('channelId : ', channelId);
 
           const newData = await Message.create({
-              senderId:senderId._id,
+              senderId: senderId._id,
               message:data.message,
-              isPrivate:data.isPrivate,
-              channel:channelId._id,
+              channelId: channelId._id
           });
 
           console.log('newData :',newData);
-    
+          
           socket.emit('message', data);
           socket.broadcast.emit('message', data);
         }

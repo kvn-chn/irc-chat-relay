@@ -6,15 +6,26 @@ const { getUserById } = require('./user');
 
 const verifyToken = require('./verifyToken');
 
-router.get('/:channel', async (req, res) => {  
+router.get('/:channel', async (req, res) => {
     try {
         const { channel } = req.params;
         const channelId = await getChannel(channel);
         const messages = await getMessages(channelId._id);
+        console.log(messages);
 
         const messagesWithUserNames = await Promise.all(messages.map(async message => {
-            const user = await getUserById(message.senderId);
-            return { ...message._doc, userName: user.username };
+            const sender = await getUserById(message.senderId);
+            const receiver = await getUserById(message.receiverId);
+
+            const formattedMessage = {
+                sender: sender.username,
+                receiver: receiver ? receiver.username : null,
+                createdAt: new Date(message.createdAt),
+                message: message.message,
+                channel: channelId.name
+            };
+
+            return formattedMessage;
         }));
 
         return res.status(200).json(messagesWithUserNames);
@@ -36,7 +47,7 @@ router.post('/', async (req, res) => {
 });
 
 function getMessages(channel) {
-    return Message.find({ channel });
+    return Message.find({ channelId: channel });
 }
 
 module.exports = router;

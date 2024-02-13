@@ -6,22 +6,18 @@ const messageSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-    receiver: {
-        type: String,
+    receiverId: {
+        type: mongoose.Schema.Types.ObjectId,
         required: false
     },
     message: {
         type: String,
         required: true
     },
-    isPrivate: {
-        type: Boolean,
-        required: true
-    },
-    channel: {
+    channelId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Channel',
-        required: false
+        required: true
     }
 },{ timestamps: true });
 

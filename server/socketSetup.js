@@ -60,7 +60,7 @@ var socketSetup = function (server) {
             socket.broadcast.emit('activeUsers', activeUsersArray);
         });
         socket.on('message', function (data) { return __awaiter(void 0, void 0, void 0, function () {
-            var currentTime, hours, minutes, command, _a, userId, newUsername, activeUsersArray, receiverUsername_1, senderUsername, receiverSocketId, receiverSocket, privateMessage, time, message, receiverId, senderId, currentTime_1, hours_1, minutes_1, senderId, channelId, newData;
+            var currentTime, hours, minutes, command, _a, receiverUsername_1, senderUsername, receiverSocketId, receiverSocket, privateMessage, message, receiverId, senderId, channelId, senderId, channelId, newData;
             var _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -69,7 +69,7 @@ var socketSetup = function (server) {
                         hours = currentTime.getHours() < 10 ? "0".concat(currentTime.getHours()) : currentTime.getHours();
                         minutes = currentTime.getMinutes() < 10 ? "0".concat(currentTime.getMinutes()) : currentTime.getMinutes();
                         console.log('Message received:', data);
-                        if (!(data.message[0] === "/")) return [3 /*break*/, 12];
+                        if (!(data.message[0] === "/")) return [3 /*break*/, 14];
                         command = data.message.split(' ')[0];
                         _a = command;
                         switch (_a) {
@@ -80,89 +80,87 @@ var socketSetup = function (server) {
                             case '/quit': return [3 /*break*/, 2];
                             case '/users': return [3 /*break*/, 2];
                             case '/msg': return [3 /*break*/, 2];
-                            case '/help': return [3 /*break*/, 10];
+                            case '/help': return [3 /*break*/, 11];
                         }
-                        return [3 /*break*/, 10];
-                    case 1:
-                        userId = data.id;
-                        newUsername = data.message.split(' ')[1];
-                        activeUsersArray = Array.from(activeUsers.values());
-                        activeUsers.set(userId, newUsername);
-                        socket.emit('serverResponse', 'Username updated');
-                        socket.broadcast.emit('activeUsers', activeUsersArray);
-                        return [3 /*break*/, 11];
+                        return [3 /*break*/, 12];
+                    case 1: 
+                    /* const userId = data.id;
+                    const newUsername = data.message.split(' ')[1];
+                    const activeUsersArray = Array.from(activeUsers.values());
+          
+                    activeUsers.set(userId, newUsername);
+          
+                    socket.emit('serverResponse', 'Username updated');
+                    socket.broadcast.emit('activeUsers', activeUsersArray); */
+                    return [3 /*break*/, 13];
                     case 2:
                         receiverUsername_1 = data.message.split(' ')[1];
-                        senderUsername = activeUsers.get(data.id);
+                        senderUsername = data.sender;
                         receiverSocketId = (_b = Array.from(activeUsers.entries()).find(function (_a) {
                             var id = _a[0], username = _a[1];
                             return username === receiverUsername_1;
                         })) === null || _b === void 0 ? void 0 : _b[0];
-                        if (!receiverSocketId) return [3 /*break*/, 8];
+                        if (!receiverSocketId) return [3 /*break*/, 9];
                         receiverSocket = socketIO.sockets.sockets.get(receiverSocketId);
                         privateMessage = data.message.split(' ').slice(2).join(' ');
-                        if (!receiverSocket) return [3 /*break*/, 6];
-                        time = "".concat(hours, ":").concat(minutes);
-                        message = { id: data.id, sender: senderUsername, message: privateMessage, receiver: receiverUsername_1, time: time, isPrivate: true };
+                        if (!receiverSocket) return [3 /*break*/, 7];
+                        message = { sender: senderUsername, message: privateMessage, receiver: receiverUsername_1, createdAt: currentTime, channel: data.channel };
                         socket.emit('message', message);
                         receiverSocket.emit('message', message);
-                        return [4 /*yield*/, getUser(receiverUsername_1)];
+                        return [4 /*yield*/, getUser(receiverUsername_1)._id];
                     case 3:
                         receiverId = _c.sent();
-                        return [4 /*yield*/, getUser(senderUsername)];
+                        return [4 /*yield*/, getUser(senderUsername)._id];
                     case 4:
                         senderId = _c.sent();
+                        return [4 /*yield*/, getChannel(data.channel)._id];
+                    case 5:
+                        channelId = _c.sent();
                         return [4 /*yield*/, Message.create({
                                 senderId: senderId,
                                 receiverId: receiverId,
                                 message: privateMessage,
-                                isPrivate: true,
+                                channelId: channelId
                             })];
-                    case 5:
-                        _c.sent();
-                        return [3 /*break*/, 7];
                     case 6:
+                        _c.sent();
+                        return [3 /*break*/, 8];
+                    case 7:
                         socket.emit('serverResponse', 'User not found or offline');
-                        _c.label = 7;
-                    case 7: return [3 /*break*/, 9];
-                    case 8:
+                        _c.label = 8;
+                    case 8: return [3 /*break*/, 10];
+                    case 9:
                         socket.emit('serverResponse', 'User not found');
-                        _c.label = 9;
-                    case 9: return [3 /*break*/, 11];
-                    case 10:
-                        socket.emit('serverResponse', "Command doesn't exist");
-                        _c.label = 11;
-                    case 11: return [3 /*break*/, 16];
+                        _c.label = 10;
+                    case 10: return [3 /*break*/, 13];
+                    case 11: return [3 /*break*/, 13];
                     case 12:
-                        currentTime_1 = new Date();
-                        hours_1 = currentTime_1.getHours() < 10 ? "0".concat(currentTime_1.getHours()) : currentTime_1.getHours();
-                        minutes_1 = currentTime_1.getMinutes() < 10 ? "0".concat(currentTime_1.getMinutes()) : currentTime_1.getMinutes();
-                        data.time = "".concat(hours_1, ":").concat(minutes_1);
-                        data.sender = activeUsers.get(data.id);
-                        data.isPrivate = false;
-                        console.log('typeOf :', typeof (data.id));
+                        socket.emit('serverResponse', "Command doesn't exist");
+                        _c.label = 13;
+                    case 13: return [3 /*break*/, 18];
+                    case 14:
+                        console.error('sender :', data.sender);
                         return [4 /*yield*/, getUser(data.sender)];
-                    case 13:
+                    case 15:
                         senderId = _c.sent();
                         console.log('userId : ', senderId._id);
                         console.log('data.channel : ', data.channel);
                         return [4 /*yield*/, getChannel(data.channel)];
-                    case 14:
+                    case 16:
                         channelId = _c.sent();
-                        console.log('channelId : ', channelId._id);
+                        console.log('channelId : ', channelId);
                         return [4 /*yield*/, Message.create({
                                 senderId: senderId._id,
                                 message: data.message,
-                                isPrivate: data.isPrivate,
-                                channel: channelId._id,
+                                channelId: channelId._id
                             })];
-                    case 15:
+                    case 17:
                         newData = _c.sent();
                         console.log('newData :', newData);
                         socket.emit('message', data);
                         socket.broadcast.emit('message', data);
-                        _c.label = 16;
-                    case 16: return [2 /*return*/];
+                        _c.label = 18;
+                    case 18: return [2 /*return*/];
                 }
             });
         }); });
