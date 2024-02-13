@@ -4,11 +4,12 @@ import { getSocket } from "../socket";
 import Typing from "./Typing";
 
 interface Data {
-  id: string;
-  sender: string;
+  _id: string;
+  senderId: string;
+  userName: string;
   receiver?: string;
   message: string;
-  time: string;
+  createdAt: string;
   isPrivate: boolean;
 }
 
@@ -20,6 +21,8 @@ const ChatBody = ({ selectedChannel, setSelectedChannel, messages, setMessages }
 }) => {
   //const [messages, setMessages] = useState<Data[]>([]);
   const socket = getSocket();
+
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     //localStorage.getItem("username");
@@ -36,7 +39,31 @@ const ChatBody = ({ selectedChannel, setSelectedChannel, messages, setMessages }
       socket.off("message");
       socket.off("serverResponse");
     };
-  });
+  }, [socket, setMessages]);
+
+  useEffect(() =>{
+    if (selectedChannel) {
+      console.log('here');
+      fetchMessages();
+    }
+  }, [selectedChannel]);
+
+  async function fetchMessages() {
+    await fetch(`http://localhost:4000/message/${selectedChannel}`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log('data received from fetchMessages :', data);
+        console.log('type of data :', typeof data);
+        setMessages(data);
+      });
+  }
+
+  function formatTime(timestamp: string) {
+    const date = new Date(timestamp);
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    return `${hours}:${minutes < 10 ? '0' : ''}${minutes}`;
+  }
 
   return (
     <>
@@ -54,9 +81,9 @@ const ChatBody = ({ selectedChannel, setSelectedChannel, messages, setMessages }
           {selectedChannel && (
             <>
             {messages.map((data, index) =>
-              data.id !== socket.id ? (
+              data.senderId !== userId ? (
                 <div key={index} className="w-[70%] flex flex-col mt-4 mb-2">
-                  <label className="ml-5 text-sm mb-[3px]">{data.sender}</label>
+                  <label className="ml-5 text-sm mb-[3px]">{data.userName}</label>
                   <div className="flex flex-wrap">
                     <p
                       className={`text-lg overflow-hidden break-words border my-1 ml-3 p-3 mt-[-2px] ${
@@ -66,7 +93,7 @@ const ChatBody = ({ selectedChannel, setSelectedChannel, messages, setMessages }
                       {data.message}
                     </p>
                   </div>
-                  <label className="ml-5 mt[-2px] text-sm">{data.time}</label>
+                  <label className="ml-5 mt[-2px] text-sm">{formatTime(data.createdAt)}</label>
                 </div>
               ) : (
                 <div key={index} className="flex justify-end mt-4 mb-2">
@@ -78,7 +105,7 @@ const ChatBody = ({ selectedChannel, setSelectedChannel, messages, setMessages }
                     </div>
 
                     <div className="flex justify-end mr-5 mt[-2px] ml-6">
-                      <label className="text-sm">{data.time}</label>
+                      <label className="text-sm">{formatTime(data.createdAt)}</label>
                     </div>
                   </div>
                 </div>

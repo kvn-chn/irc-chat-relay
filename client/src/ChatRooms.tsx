@@ -8,12 +8,10 @@ import ActiveUser from "./components/ActiveUser";
 import Channel from "./components/Channel";
 import ThemeButton from "./components/ThemeButton";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
 const ChatRooms = () => {
   const [connected, setConnected] = useState(isConnected());
   const username = localStorage.getItem("username");
-  //const { username, id, setId, setUsername } = useContext(UserContext);
 
   const [selectedChannel, setSelectedChannel] = useState(null);
 
@@ -33,17 +31,6 @@ const ChatRooms = () => {
       console.log("Connected to server:", socket.id);
     });
   }, []);
-
-  useEffect(() => {
-    if (username) {
-      const userId = localStorage.getItem('userId');
-      axios.get(`/messages/${userId}`).then((response) => {
-        setMessages(response.data);
-        console.log('response.data :', response.data);
-      }
-      );
-    }
-  }, [username]);
 
   const logOut = () => {
     disconnect();

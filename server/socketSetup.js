@@ -39,6 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var getUser = require('./routes/user').getUser;
 var Message = require('./models/messageModel');
 var Channel = require('./models/channelModel');
+var getChannel = require('./routes/channel').getChannel;
 var socketSetup = function (server) {
     var socketIO = require('socket.io')(server, {
         cors: {
@@ -59,7 +60,7 @@ var socketSetup = function (server) {
             socket.broadcast.emit('activeUsers', activeUsersArray);
         });
         socket.on('message', function (data) { return __awaiter(void 0, void 0, void 0, function () {
-            var currentTime, hours, minutes, command, _a, userId, newUsername, activeUsersArray, receiverUsername_1, senderUsername, receiverSocketId, receiverSocket, privateMessage, time, message, receiverId, senderId, currentTime_1, hours_1, minutes_1, senderId, newData;
+            var currentTime, hours, minutes, command, _a, userId, newUsername, activeUsersArray, receiverUsername_1, senderUsername, receiverSocketId, receiverSocket, privateMessage, time, message, receiverId, senderId, currentTime_1, hours_1, minutes_1, senderId, channelId, newData;
             var _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -131,7 +132,7 @@ var socketSetup = function (server) {
                     case 10:
                         socket.emit('serverResponse', "Command doesn't exist");
                         _c.label = 11;
-                    case 11: return [3 /*break*/, 15];
+                    case 11: return [3 /*break*/, 16];
                     case 12:
                         currentTime_1 = new Date();
                         hours_1 = currentTime_1.getHours() < 10 ? "0".concat(currentTime_1.getHours()) : currentTime_1.getHours();
@@ -144,17 +145,24 @@ var socketSetup = function (server) {
                     case 13:
                         senderId = _c.sent();
                         console.log('userId : ', senderId._id);
+                        console.log('data.channel : ', data.channel);
+                        return [4 /*yield*/, getChannel(data.channel)];
+                    case 14:
+                        channelId = _c.sent();
+                        console.log('channelId : ', channelId._id);
                         return [4 /*yield*/, Message.create({
                                 senderId: senderId._id,
                                 message: data.message,
                                 isPrivate: data.isPrivate,
+                                channel: channelId._id,
                             })];
-                    case 14:
+                    case 15:
                         newData = _c.sent();
+                        console.log('newData :', newData);
                         socket.emit('message', data);
                         socket.broadcast.emit('message', data);
-                        _c.label = 15;
-                    case 15: return [2 /*return*/];
+                        _c.label = 16;
+                    case 16: return [2 /*return*/];
                 }
             });
         }); });

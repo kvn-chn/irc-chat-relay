@@ -1,8 +1,8 @@
 const express = require('express');
 const User = require('../models/userModel');
-const router = express.Router();
+const userRoutes = express.Router();
 
-router.post('/register', async (req, res) => {
+userRoutes.post('/register', async (req, res) => {
     try {
         const { username, password } = req.body;
 
@@ -46,7 +46,7 @@ router.post('/register', async (req, res) => {
     }
 });
 
-router.post('/login', async (req, res) => {
+userRoutes.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
 
@@ -99,4 +99,4 @@ function getUserById(id) {
     return user;
 }
 
-module.exports = { router, getUser, getUserById };
+module.exports = { userRoutes, getUser, getUserById };

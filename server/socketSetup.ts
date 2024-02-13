@@ -3,6 +3,7 @@ import { Server as HttpServer, get } from 'http';
 const { getUser } = require('./routes/user');
 const Message = require('./models/messageModel');
 const Channel = require('./models/channelModel');
+const { getChannel } = require('./routes/channel');
 
 interface Data {
   id: string;
@@ -11,6 +12,7 @@ interface Data {
   message: string;
   time: string;
   isPrivate: boolean;
+  channel:string;
 }
 
 const socketSetup = (server: HttpServer) => {
@@ -119,12 +121,18 @@ const socketSetup = (server: HttpServer) => {
           
           const senderId = await getUser(data.sender);
           console.log('userId : ', senderId._id);
+          console.log('data.channel : ', data.channel);
+          const channelId = await getChannel(data.channel);
+          console.log('channelId : ', channelId._id);
 
           const newData = await Message.create({
               senderId:senderId._id,
               message:data.message,
               isPrivate:data.isPrivate,
+              channel:channelId._id,
           });
+
+          console.log('newData :',newData);
     
           socket.emit('message', data);
           socket.broadcast.emit('message', data);
@@ -134,7 +142,6 @@ const socketSetup = (server: HttpServer) => {
       socket.on('typing', (username: string) => {
         socket.broadcast.emit('typing', username);
       })
-    
     
       socket.on('stopTyping', (username: string) => {
         socket.broadcast.emit('stopTyping', username);

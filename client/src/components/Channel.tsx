@@ -57,11 +57,11 @@ const Channel = ({selectedChannel, setSelectedChannel}) => {
       </div>
 
       {channels.length > 0 && (
-        <div className="pl-4 pt-4">
+        <div className="px-4 pt-4">
           {channels.map((channel, index) => (
             <div
               key={index}
-              className={`border-b border-gray-100 py-2 dark:border-gray-600 cursor-pointer 
+              className={`border-b my-2 border-gray-100 py-2 px-2 dark:border-gray-600 cursor-pointer rounded
                 ${selectedChannel === channel ? 
                   "bg-blue-100 dark:bg-[#004449]" : 
                   "hover:bg-blue-100 dark:hover:bg-[#004449] "}`}

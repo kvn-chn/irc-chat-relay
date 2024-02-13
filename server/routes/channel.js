@@ -1,9 +1,9 @@
 const express = require('express');
 const Channel = require('../models/channelModel');
 const { getUser, getUserById } = require('./user');
-const router = express.Router();
+const channelRoutes = express.Router();
 
-router.post('/', async (req, res) => {
+channelRoutes.post('/', async (req, res) => {
     try {
         const { channelName, userId } = req.body;
         console.log('userID', userId);
@@ -16,7 +16,6 @@ router.post('/', async (req, res) => {
 
         if (existingChannel) return res.status(400).json({ message: 'Channel already exists, joining' });
 
-        
         const userID = await getUserById(userId).then(user => user._id);
 
         const newChannel = await Channel.create({ name: channelName, ownerId: userID});
@@ -28,7 +27,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.delete('/:id', async (req, res) => {
+channelRoutes.delete('/:id', async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -47,4 +46,8 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
-module.exports = router;
+function getChannel(channelName) {
+    return Channel.findOne({ name: channelName });
+}
+
+module.exports = { channelRoutes, getChannel };

@@ -7,7 +7,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 const secretKey = process.env.SECRETKEY;
 
-router.post('/', async (req, res) => {
+module.exports = async (req, res) => {
     const { token } = req.body;
 
     if (!token) {
@@ -36,6 +36,4 @@ router.post('/', async (req, res) => {
         
         return res.status(401).json({ message: 'Invalid token' });
     }
-});
-
-module.exports = router;
+};
