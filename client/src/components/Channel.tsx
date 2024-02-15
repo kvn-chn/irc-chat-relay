@@ -34,6 +34,12 @@ const Channel = ({ selectedChannel, setSelectedChannel }) => {
   function selectChannel(channel: string) {
     setSelectedChannel(channel);
     console.log("Selected channel:", channel);
+    const data = {
+      sender: username,
+      message: "/users " + channel,
+    };
+
+    socket.emit("message", data);
   }
 
   const createChal = async (channelName: string) => {
