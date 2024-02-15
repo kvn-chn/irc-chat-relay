@@ -74,6 +74,11 @@ const Channel = ({
     };
   }, []);
 
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key !== "Enter") return;
+    handleJoinChannel();
+  };
+
   return (
     <div className="flex flex-col p-2">
       <h1 className="flex justify-center text-3xl font-bold">Channels</h1>
@@ -83,6 +88,7 @@ const Channel = ({
           placeholder="Enter Channel Name"
           value={newChannel}
           onChange={handleChannelNameChange}
+          onKeyDown={handleKeyPress}
         />
         <button
           className="mt-1 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
