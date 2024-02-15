@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getSocket, disconnect, isConnected } from "./socket";
 import Input from "./components/Input";
+import App from "./App";
 import { toast } from "react-toastify";
 import ChatBody from "./components/ChatBody";
 import ActiveUser from "./components/ActiveUser";
@@ -8,21 +9,13 @@ import Channel from "./components/Channel";
 import ThemeButton from "./components/ThemeButton";
 import { useNavigate } from "react-router-dom";
 
-interface Data {
-  sender?: string;
-  receiver?: string | null;
-  message: string;
-  createdAt: string;
-  channel: string;
-}
-
 const ChatRooms = () => {
   const [connected, setConnected] = useState(isConnected());
   const username = localStorage.getItem("username");
 
-  const [selectedChannel, setSelectedChannel] = useState<string | null>(null);
+  const [selectedChannel, setSelectedChannel] = useState(null);
 
-  const [messages, setMessages] = useState<Data[]>([]);
+  const [messages, setMessages] = useState([]);
 
   const navigate = useNavigate();
 
@@ -31,25 +24,13 @@ const ChatRooms = () => {
 
     if (!isConnected()) {
       logOut();
-      if (socket) socket.emit("disconnect");
+      socket.emit("disconnect");
     }
 
-    if (socket) {
-      socket.on("connect", () => {
-        console.log("Connected to server:", socket.id);
-      });
-    }
-
-    return () => {
-      if (socket) socket.disconnect();
-    };
+    socket.on("connect", () => {
+      console.log("Connected to server:", socket.id);
+    });
   }, []);
-
-  useEffect(() => {
-    if (!connected) {
-      logOut();
-    }
-  }, [connected]);
 
   const logOut = () => {
     disconnect();
@@ -57,6 +38,10 @@ const ChatRooms = () => {
     localStorage.removeItem("username");
     setConnected(isConnected());
     navigate("/");
+    /*axios.post("/logout").then(() => {
+      setId(null);
+      setUsername(null);
+    });*/
   };
 
   return (
@@ -76,7 +61,7 @@ const ChatRooms = () => {
                 Welcome {username}
               </h1>
 
-              <div className="flex items-center">
+              <div>
                 <ThemeButton />
 
                 <button
@@ -96,7 +81,12 @@ const ChatRooms = () => {
                 setMessages={setMessages}
               />
               <div className="mt-2 p-2">
-                <Input selectedChannel={selectedChannel} />
+                <Input
+                  selectedChannel={selectedChannel}
+                  setSelectedChannel={setSelectedChannel}
+                  messages={messages}
+                  setMessages={setMessages}
+                />
               </div>
             </div>
           </div>
@@ -104,7 +94,9 @@ const ChatRooms = () => {
             <ActiveUser />
           </div>
         </div>
-      ) : null}
+      ) : (
+        <App />
+      )}
     </div>
   );
 };
