@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { getSocket, disconnect, isConnected } from "./socket";
 import Input from "./components/Input";
-import App from "./App";
 import { toast } from "react-toastify";
 import ChatBody from "./components/ChatBody";
 import ActiveUser from "./components/ActiveUser";
@@ -58,10 +57,6 @@ const ChatRooms = () => {
     localStorage.removeItem("username");
     setConnected(isConnected());
     navigate("/");
-    /*axios.post("/logout").then(() => {
-      setId(null);
-      setUsername(null);
-    });*/
   };
 
   return (
@@ -81,7 +76,7 @@ const ChatRooms = () => {
                 Welcome {username}
               </h1>
 
-              <div>
+              <div className="flex items-center">
                 <ThemeButton />
 
                 <button

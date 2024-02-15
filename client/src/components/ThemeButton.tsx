@@ -28,10 +28,14 @@ const ThemeButton = () => {
 
   return (
     <button
-      className="p-2 rounded dark:bg-white dark:text-black bg-[#004449] text-[#09ebe3] mr-2"
+      className="p-2 rounded bg-white text-black dark:bg-[#004449] dark:text-[#09ebe3] mr-2"
       onClick={changeTheme}
     >
-      {darkTheme ? "Light mode" : "Dark mode"}
+      <img
+        width={25}
+        height={25}
+        src={`/assets/${darkTheme ? "dark" : "light"}_mode.png`}
+      />
     </button>
   );
 };
