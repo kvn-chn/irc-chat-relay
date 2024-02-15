@@ -64,7 +64,22 @@ const socketSetup = (server: HttpServer) => {
             case '/list':
             case '/delete':
             case '/join':
+              const receiveChannel = data.message.split(' ')[1];
+              
+              socket.join(receiveChannel);
+              console.log('user has joined');
+              socket.emit('joinChannel', receiveChannel);
+              break;
+
             case '/quit':
+              const username = activeUsers.get(socket.id);
+              const channelName = data.message.split(' ')[1] || data.channel;
+
+              console.log(`User ${username} has quit.`);
+              socket.leave(channelName);
+              socket.emit('leaveChannel', channelName);
+              break;
+
             case '/users':
             case '/msg':
               const receiverUsername = data.message.split(' ')[1];
@@ -79,8 +94,7 @@ const socketSetup = (server: HttpServer) => {
                 if (receiverSocket) {
                   const message: Data = { sender: senderUsername, message: privateMessage, receiver: receiverUsername, createdAt: `${currentTime}`, channel: data.channel};
                   socket.emit('message', message);
-
-                  receiverSocket.emit('message', message);
+                  receiverSocket.to(data.channel).emit('message', message);
 
                   const receiverId = await getUser(receiverUsername)._id;
                   const senderId = await getUser(senderUsername)._id;
@@ -112,6 +126,7 @@ const socketSetup = (server: HttpServer) => {
           const senderId = await getUser(data.sender);
           const channelId = await getChannel(data.channel);
           data.createdAt = `${currentTime}`;
+          data.receiver = null;
 
           const newData = await Message.create({
               senderId: senderId._id,
@@ -122,7 +137,8 @@ const socketSetup = (server: HttpServer) => {
           console.log('newData :',newData);
 
           socket.emit('message', data);
-          socket.broadcast.emit('message', data);
+          socket.to(data.channel).emit('message', data);
+          //socket.to(data.channel).broadcast.emit('message', data);
         }
       });
     

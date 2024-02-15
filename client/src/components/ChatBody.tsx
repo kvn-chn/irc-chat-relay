@@ -17,20 +17,35 @@ const ChatBody = ({
   messages,
   setMessages,
 }: {
-  selectedChannel: string;
-  setSelectedChannel: (channel: string) => void;
+  selectedChannel: string | null;
+  setSelectedChannel: (channel: string | null) => void;
   messages: Data[];
-  setMessages: (messages: Data[]) => void;
+  setMessages: (messages: Data[]) => Data[];
 }) => {
   //const [messages, setMessages] = useState<Data[]>([]);
   const socket = getSocket();
 
   const username = localStorage.getItem("username");
+  console.log(selectedChannel);
 
   useEffect(() => {
     socket.on("message", (data: Data) => {
-      setMessages((prevMessages) => [...prevMessages, data]);
+      setMessages((prevMessages: Data[]) => [...prevMessages, data]);
       console.log("data received from socket :", data);
+    });
+
+    socket.on("leaveChannel", (channelName: string) => {
+      setMessages((prevMessages: Data[]) => {
+        if (
+          prevMessages.length > 0 &&
+          prevMessages[0].channel === channelName
+        ) {
+          setSelectedChannel(null);
+          return [];
+        } else {
+          return prevMessages;
+        }
+      });
     });
 
     socket.on("serverResponse", (message) => {

@@ -49,7 +49,10 @@ const ChatRooms = () => {
       {connected ? (
         <div className="flex bg-black h-screen">
           <div className="w-1/5 m-2 text-black dark:text-[#09ebe3] dark:bg-[#03252b] bg-white rounded flex flex-col justify-center">
-            <Channel selectedChannel={selectedChannel} setSelectedChannel={setSelectedChannel}/>
+            <Channel
+              selectedChannel={selectedChannel}
+              setSelectedChannel={setSelectedChannel}
+            />
           </div>
 
           <div className="w-3/5 my-2 flex flex-col text-black dark:text-[#09ebe3] dark:bg-[#05323a] bg-white rounded justify-center items-start">
@@ -71,15 +74,15 @@ const ChatRooms = () => {
             </div>
 
             <div className="mt-2 flex flex-col w-full">
-              <ChatBody 
-                selectedChannel={selectedChannel} 
+              <ChatBody
+                selectedChannel={selectedChannel}
                 setSelectedChannel={setSelectedChannel}
                 messages={messages}
                 setMessages={setMessages}
               />
               <div className="mt-2 p-2">
-                <Input 
-                  selectedChannel={selectedChannel} 
+                <Input
+                  selectedChannel={selectedChannel}
                   setSelectedChannel={setSelectedChannel}
                   messages={messages}
                   setMessages={setMessages}
