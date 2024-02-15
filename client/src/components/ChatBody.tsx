@@ -109,9 +109,9 @@ const ChatBody = ({
                     </label>
                     <div className="flex flex-wrap">
                       <p
-                        className={`text-lg overflow-hidden break-words border my-1 ml-3 p-3 mt-[-2px] ${
+                        className={`text-lg overflow-hidden break-words border my-1 ml-3 px-5 py-3 mt-[-2px] ${
                           data.receiver ? "italic" : "not-italic"
-                        } border-[#0a2b03] rounded-[22px] bg-[#2f941a] text-white`}
+                        } border-[#0a2b03] rounded-[30px] bg-[#2f941a] text-white`}
                       >
                         {data.message}
                       </p>
@@ -124,7 +124,7 @@ const ChatBody = ({
                   <div key={index} className="flex justify-end mt-4 mb-2">
                     <div className="w-[70%] justify-end">
                       <div className="flex flex-wrap justify-end">
-                        <p className="text-lg overflow-hidden break-words border my-2 mr-3 p-3 border-[#03252b] rounded-[22px] bg-[#1356bb] text-white">
+                        <p className="text-lg overflow-hidden break-words border my-2 mr-3 px-5 py-3 border-[#03252b] rounded-[30px] bg-[#1356bb] text-white">
                           {data.message}
                         </p>
                       </div>

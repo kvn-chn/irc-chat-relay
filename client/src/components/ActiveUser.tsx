@@ -71,19 +71,19 @@ const ActiveUser = () => {
   }, [socket, activeUsers]);
 
   return (
-    <div className="flex flex-col text-center">
-      <h2 className="text-3xl font-bold">Active Users</h2>
-
+    <div className="flex flex-col text-center gap-y-4">
+      <h2 className="mt-4 text-3xl font-bold">Active Users</h2>
+      <div className="border-b border-gray-700 p-2 flex items-center gap-2"></div>
       {activeUsers.map((user, index) => (
-        <div className="border-b border-gray-100 p-2 flex items-center gap-2">
+        <div className="pl-4 flex items-center gap-3 my-1">
           <div
-            className={"w-8 h-8 rounded-full flex items-center " + user.color}
+            className={"w-10 h-10 rounded-full flex items-center " + user.color}
           >
-            <div className="text-center w-full text-black uppercase">
+            <div className="text-center w-full text-black uppercase text-lg">
               {user.name[0]}
             </div>
           </div>
-          <span key={index}>{user.name}</span>
+          <span key={index} className="overflow-hidden overflow-ellipsis whitespace-nowrap max-w-xs text-lg">{user.name}</span>
         </div>
       ))}
     </div>

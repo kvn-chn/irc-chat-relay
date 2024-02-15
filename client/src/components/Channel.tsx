@@ -76,11 +76,12 @@ const Channel = ({ selectedChannel, setSelectedChannel }) => {
   }, []);
 
   return (
-    <div className="flex flex-col p-2">
-      <h1 className="flex justify-center text-3xl font-bold">Channels</h1>
+    <div className="flex flex-col text-center gap-y-4">
+      <h2 className="mt-4 text-3xl font-bold">Channels</h2>
+      <div className="border-b border-gray-700 p-2 flex items-center gap-2"></div>
       <div className="flex flex-col items-center">
         <input
-          className="mt-7 w-[90%] mx-1 mb-1 p-1 border border-gray-300 rounded bg-neutral-300 text-black dark:text-[#09ebe3] dark:bg-[#004449]"
+          className="mt-7 w-[90%] mx-1 mb-1 p-2 border border-gray-300 rounded bg-neutral-300 text-black dark:text-[#09ebe3] dark:bg-[#004449]"
           placeholder="Enter Channel Name"
           value={newChannel}
           onChange={handleChannelNameChange}
@@ -94,11 +95,11 @@ const Channel = ({ selectedChannel, setSelectedChannel }) => {
       </div>
 
       {channels.length > 0 && (
-        <div className="px-4 pt-4">
+        <div className="">
           {channels.map((channel, index) => (
             <div
               key={index}
-              className={`border-b my-2 border-gray-100 p-2 dark:border-gray-600 cursor-pointer rounded
+              className={`my-0.5 border-gray-100 p-4 dark:border-gray-600 cursor-pointer rounded-lg text-left text-lg
                 ${
                   selectedChannel === channel
                     ? "bg-blue-100 dark:bg-[#004449]"

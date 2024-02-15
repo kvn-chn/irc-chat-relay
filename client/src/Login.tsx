@@ -60,7 +60,7 @@ const Login = () => {
 
             
             <input
-              className="mb-8 p-2 border-b border-gray-300 rounded-t-none rounded-l-none rounded-r-none bg-[#05323a]"
+              className="mb-8 p-2 pr-10 border-b border-gray-300 rounded-t-none rounded-l-none rounded-r-none bg-[#05323a] bg-none outline-none text-white focus:ring-0 focus:border-b focus:border-[#09ebe3]"
               type="text"
               placeholder="Enter your username"
               value={username}
@@ -71,7 +71,7 @@ const Login = () => {
 
             
             <input
-              className="mb-8 p-2 border-b border-gray-300 rounded-t-none rounded-l-none rounded-r-none bg-[#05323a]"
+              className="mb-8 p-2 border-b border-gray-300 rounded-t-none rounded-l-none rounded-r-none bg-[#05323a] bg-none outline-none text-white focus:ring-0 focus:border-b focus:border-[#09ebe3]"
               type="password"
               placeholder="Enter your password"
               value={password}
