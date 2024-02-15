@@ -3,6 +3,7 @@ import { Server as HttpServer, get } from 'http';
 const { getUser } = require('./routes/user');
 const Message = require('./models/messageModel');
 const Channel = require('./models/channelModel');
+const User = require('./models/userModel');
 const { getChannel } = require('./routes/channel');
 
 interface Data {
@@ -89,23 +90,27 @@ const socketSetup = (server: HttpServer) => {
               const receiverSocketId = Array.from(activeUsers.entries()).find(([id, username]) => username === receiverUsername)?.[0];
             
               if (receiverSocketId) {
+                if (senderUsername === receiverUsername) socket.emit('serverResponse', 'Cannot send private message to yourself');
+
                 const receiverSocket = socketIO.sockets.sockets.get(receiverSocketId);
                 const privateMessage = data.message.split(' ').slice(2).join(' ');
             
                 if (receiverSocket) {
                   const message: Data = { sender: senderUsername, message: privateMessage, receiver: receiverUsername, createdAt: `${currentTime}`, channel: data.channel};
                   socket.emit('message', message);
-                  receiverSocket.to(data.channel).emit('message', message);
+                  receiverSocket.emit('message', message);
 
-                  const receiverId = await getUser(receiverUsername)._id;
-                  const senderId = await getUser(senderUsername)._id;
-                  const channelId = await getChannel(data.channel)._id;
+                  const receiverId = await getUser(receiverUsername);
+                  const senderId = await getUser(senderUsername);
+                  const channelId = await getChannel(data.channel);
+
+                  console.log({ receiverId, senderId, channelId });
 
                   await Message.create({
-                    senderId,
-                    receiverId,
+                    senderId: senderId._id,
+                    receiverId: receiverId._id,
                     message:privateMessage,
-                    channelId
+                    channelId: channelId._id
                   })
 
                 } else {

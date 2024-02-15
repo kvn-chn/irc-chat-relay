@@ -39,6 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var getUser = require('./routes/user').getUser;
 var Message = require('./models/messageModel');
 var Channel = require('./models/channelModel');
+var User = require('./models/userModel');
 var getChannel = require('./routes/channel').getChannel;
 var socketSetup = function (server) {
     var socketIO = require('socket.io')(server, {
@@ -55,7 +56,6 @@ var socketSetup = function (server) {
             console.log('Current users:', activeUsers);
             // Convert activeUsers map to an array and emit it to the client
             var activeUsersArray = Array.from(activeUsers.values());
-            console.log('Active users array:', activeUsersArray);
             socket.emit('activeUsers', activeUsersArray);
             socket.broadcast.emit('activeUsers', activeUsersArray);
         });
@@ -120,16 +120,17 @@ var socketSetup = function (server) {
                         if (!receiverSocket) return [3 /*break*/, 10];
                         message = { sender: senderUsername, message: privateMessage, receiver: receiverUsername_1, createdAt: "".concat(currentTime), channel: data.channel };
                         socket.emit('message', message);
-                        receiverSocket.to(data.channel).emit('message', message);
-                        return [4 /*yield*/, getUser(receiverUsername_1)._id];
+                        receiverSocket.emit('message', message);
+                        return [4 /*yield*/, User.findOne({ username: receiverUsername_1 })];
                     case 6:
                         receiverId = _c.sent();
-                        return [4 /*yield*/, getUser(senderUsername)._id];
+                        return [4 /*yield*/, User.findOne({ username: senderUsername })];
                     case 7:
                         senderId = _c.sent();
-                        return [4 /*yield*/, getChannel(data.channel)._id];
+                        return [4 /*yield*/, Channel.findOne({ name: data.channel })];
                     case 8:
                         channelId = _c.sent();
+                        console.log({ receiverId: receiverId, senderId: senderId, channelId: channelId });
                         return [4 /*yield*/, Message.create({
                                 senderId: senderId,
                                 receiverId: receiverId,
