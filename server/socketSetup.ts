@@ -2,14 +2,15 @@ import { Socket } from 'socket.io';
 import { Server as HttpServer, get } from 'http';
 const { getUser } = require('./routes/user');
 const Message = require('./models/messageModel');
+const Channel = require('./models/channelModel');
+const { getChannel } = require('./routes/channel');
 
 interface Data {
-  id: string;
   sender?: string;
-  receiver?: string;
+  receiver?: string | null;
   message: string;
-  time: string;
-  isPrivate: boolean;
+  createdAt: string;
+  channel: string;
 }
 
 const socketSetup = (server: HttpServer) => {
@@ -48,25 +49,42 @@ const socketSetup = (server: HttpServer) => {
     
           switch (command) {
             case '/nick':
-              const userId = data.id;
+
+
+              /* const userId = data.id;
               const newUsername = data.message.split(' ')[1];
               const activeUsersArray = Array.from(activeUsers.values());
     
               activeUsers.set(userId, newUsername);
     
               socket.emit('serverResponse', 'Username updated');
-              socket.broadcast.emit('activeUsers', activeUsersArray);
+              socket.broadcast.emit('activeUsers', activeUsersArray); */
               break;
     
             case '/list':
             case '/delete':
             case '/join':
+              const receiveChannel = data.message.split(' ')[1];
+              
+              socket.join(receiveChannel);
+              console.log('user has joined');
+              socket.emit('joinChannel', receiveChannel);
+              break;
+
             case '/quit':
+              const username = activeUsers.get(socket.id);
+              const channelName = data.message.split(' ')[1] || data.channel;
+
+              console.log(`User ${username} has quit.`);
+              socket.leave(channelName);
+              socket.emit('leaveChannel', channelName);
+              break;
+
             case '/users':
             case '/msg':
               const receiverUsername = data.message.split(' ')[1];
 
-              const senderUsername = activeUsers.get(data.id);
+              const senderUsername = data.sender;
               const receiverSocketId = Array.from(activeUsers.entries()).find(([id, username]) => username === receiverUsername)?.[0];
             
               if (receiverSocketId) {
@@ -74,21 +92,19 @@ const socketSetup = (server: HttpServer) => {
                 const privateMessage = data.message.split(' ').slice(2).join(' ');
             
                 if (receiverSocket) {
-                  const time = `${hours}:${minutes}`;
-                  const message: Data = { id: data.id, sender: senderUsername, message: privateMessage, receiver: receiverUsername, time ,isPrivate: true };
+                  const message: Data = { sender: senderUsername, message: privateMessage, receiver: receiverUsername, createdAt: `${currentTime}`, channel: data.channel};
                   socket.emit('message', message);
+                  receiverSocket.to(data.channel).emit('message', message);
 
-                  receiverSocket.emit('message', message);
-
-
-                  const receiverId = await getUser(receiverUsername);
-                  const senderId = await getUser(senderUsername);
+                  const receiverId = await getUser(receiverUsername)._id;
+                  const senderId = await getUser(senderUsername)._id;
+                  const channelId = await getChannel(data.channel)._id;
 
                   await Message.create({
                     senderId,
                     receiverId,
                     message:privateMessage,
-                    isPrivate:true,
+                    channelId
                   })
 
                 } else {
@@ -100,39 +116,35 @@ const socketSetup = (server: HttpServer) => {
               break;
     
             case '/help':
+              break;
+              
             default:
               socket.emit('serverResponse', "Command doesn't exist");
           }
         }
-        else {
-          const currentTime = new Date();
-          
-          const hours = currentTime.getHours() < 10 ? `0${currentTime.getHours()}` : currentTime.getHours(); 
-          const minutes = currentTime.getMinutes() < 10 ? `0${currentTime.getMinutes()}` : currentTime.getMinutes();
-    
-          data.time = `${hours}:${minutes}`; 
-          data.sender = activeUsers.get(data.id);
-          data.isPrivate = false;
+        else {       
+          const senderId = await getUser(data.sender);
+          const channelId = await getChannel(data.channel);
+          data.createdAt = `${currentTime}`;
+          data.receiver = null;
 
-          console.log('typeOf :',typeof(data.id));
-                const senderId = await getUser(data.sender);
-                console.log('userId : ', senderId._id);
+          const newData = await Message.create({
+              senderId: senderId._id,
+              message:data.message,
+              channelId: channelId._id
+          });
 
-                const newData = await Message.create({
-                    senderId:senderId._id,
-                    message:data.message,
-                    isPrivate:data.isPrivate,
-                });
-    
+          console.log('newData :',newData);
+
           socket.emit('message', data);
-          socket.broadcast.emit('message', data);
+          socket.to(data.channel).emit('message', data);
+          //socket.to(data.channel).broadcast.emit('message', data);
         }
       });
     
       socket.on('typing', (username: string) => {
         socket.broadcast.emit('typing', username);
       })
-    
     
       socket.on('stopTyping', (username: string) => {
         socket.broadcast.emit('stopTyping', username);

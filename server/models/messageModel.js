@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { isStringTextContainingNode } = require('typescript');
 
 const messageSchema = new mongoose.Schema({
     senderId: {
@@ -7,16 +6,17 @@ const messageSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-    receiver: {
-        type: String,
+    receiverId: {
+        type: mongoose.Schema.Types.ObjectId,
         required: false
     },
     message: {
         type: String,
         required: true
     },
-    isPrivate: {
-        type: Boolean,
+    channelId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Channel',
         required: true
     }
 },{ timestamps: true });

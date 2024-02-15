@@ -4,7 +4,7 @@
     "module": "commonjs",
     "strict": true,
     "esModuleInterop": true,
-    "types": ["node", "express"],
+    "types": ["node", "express", "socket.io-client"],
     "resolveJsonModule": true
   },
   "include": ["../server/**/*.ts"],

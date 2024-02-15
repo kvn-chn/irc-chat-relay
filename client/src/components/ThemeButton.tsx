@@ -31,12 +31,7 @@ const ThemeButton = () => {
       className="p-2 rounded dark:bg-white dark:text-black bg-[#004449] text-[#09ebe3] mr-2"
       onClick={changeTheme}
     >
-      <img
-        height={25}
-        width={25}
-        src={darkTheme ? "/assets/light_mode.png" : "/assets/dark_mode.png"}
-        alt="Theme Mode"
-      />
+      {darkTheme ? "Light mode" : "Dark mode"}
     </button>
   );
 };

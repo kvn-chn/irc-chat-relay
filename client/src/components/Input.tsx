@@ -9,12 +9,16 @@ const Input = ({
 }) => {
   const [message, setMessage] = useState("");
   const socket = getSocket();
-  //const username = localStorage.getItem("username");
+  const username = localStorage.getItem("username");
 
   const sendMessage = () => {
     if (message.trim() === "") return;
 
-    socket.emit("message", { id: socket.id, message: message });
+    socket.emit("message", {
+      sender: username,
+      message: message,
+      channel: selectedChannel,
+    });
     setMessage("");
   };
 
