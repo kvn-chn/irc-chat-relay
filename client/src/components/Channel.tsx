@@ -12,7 +12,6 @@ const Channel = ({
 }) => {
   const [channels, setChannels] = useState<string[]>([]);
   const [newChannel, setNewChannel] = useState("");
-  //const [selectedChannel, setSelectedChannel] = useState(null);
   const userId = localStorage.getItem("userId");
   const username = localStorage.getItem("username");
   const socket = getSocket();
@@ -56,22 +55,22 @@ const Channel = ({
   };
 
   useEffect(() => {
-    const handleJoinChannel = (channelName: string) => {
+    const joinChannel = (channelName: string) => {
       createChal(channelName);
     };
 
-    const handleLeaveChannel = (channelName: string) => {
+    const leaveChannel = (channelName: string) => {
       setChannels((prevChannels) =>
         prevChannels.filter((channel) => channel !== channelName)
       );
     };
 
-    socket.on("joinChannel", handleJoinChannel);
-    socket.on("leaveChannel", handleLeaveChannel);
+    socket.on("joinChannel", joinChannel);
+    socket.on("leaveChannel", leaveChannel);
 
     return () => {
-      socket.off("joinChannel", handleJoinChannel);
-      socket.off("leaveChannel", handleLeaveChannel);
+      socket.off("joinChannel", joinChannel);
+      socket.off("leaveChannel", leaveChannel);
     };
   }, []);
 

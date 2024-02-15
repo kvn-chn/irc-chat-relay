@@ -31,7 +31,6 @@ const socketSetup = (server: HttpServer) => {
     
         // Convert activeUsers map to an array and emit it to the client
         const activeUsersArray = Array.from(activeUsers.values());
-        console.log('Active users array:', activeUsersArray);
         socket.emit('activeUsers', activeUsersArray);
         socket.broadcast.emit('activeUsers', activeUsersArray);
       });

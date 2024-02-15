@@ -22,7 +22,6 @@ const ChatBody = ({
   messages: Data[];
   setMessages: (messages: Data[]) => Data[];
 }) => {
-  //const [messages, setMessages] = useState<Data[]>([]);
   const socket = getSocket();
   const username = localStorage.getItem("username");
 

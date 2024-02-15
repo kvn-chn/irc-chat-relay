@@ -28,7 +28,7 @@ const ThemeButton = () => {
 
   return (
     <button
-      className="p-2 rounded bg-white text-black dark:bg-[#004449] dark:text-[#09ebe3] mr-2"
+      className="p-2 rounded text-black bg-blue-500 hover:bg-blue-700 dark:bg-[#004449] dark:text-[#09ebe3] mr-2"
       onClick={changeTheme}
     >
       <img

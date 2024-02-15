@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { getSocket, connect } from "./socket";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { register } from "./apiCalls";
@@ -10,9 +9,7 @@ const Register = () => {
   const [repeatPassword, setRepeatPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
+  const handleSubmit = async () => {
     if (username && password && repeatPassword && password === repeatPassword) {
       const { response, data } = await register(username, password);
 
@@ -27,7 +24,7 @@ const Register = () => {
   const handleEnterKey = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key !== "Enter") return;
 
-    handleSubmit(event);
+    handleSubmit();
   };
 
   const navigateToLogin = () => {

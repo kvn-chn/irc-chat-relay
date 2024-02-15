@@ -53,7 +53,7 @@ export const checkToken = async () => {
         },
         });
 
-        const data: { message: string, id: number, email: string } = await response.json();
+        const data: { message: string, username: string } = await response.json();
 
         return { response, data };
     }

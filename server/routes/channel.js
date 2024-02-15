@@ -6,7 +6,6 @@ const channelRoutes = express.Router();
 channelRoutes.post('/', async (req, res) => {
     try {
         const { channelName, userId } = req.body;
-        console.log('userID', userId);
 
         if (!channelName) {
             return res.status(400).json({ message: 'Please provide a channelName for the channel' });

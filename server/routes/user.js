@@ -33,7 +33,6 @@ userRoutes.post('/register', async (req, res) => {
 
         const createdUser = await User.create({ username, password });
         const hashedPassword = await createdUser.hashPassword(password);
-        console.log(hashedPassword)
     
         await createdUser.updateOne({ username: username, password: hashedPassword });
         
@@ -72,7 +71,6 @@ userRoutes.post('/login', async (req, res) => {
         }
 
         const existingUser = await User.findOne({ username });
-        console.log('existingUser',existingUser);
         
         if (!existingUser) return res.status(404).json({ message: 'Account does not exist' });
 

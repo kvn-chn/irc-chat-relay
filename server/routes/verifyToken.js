@@ -17,9 +17,7 @@ module.exports = async (req, res) => {
     try {
         const decoded = jwt.verify(token, secretKey);
 
-        const user = await User.findById(decoded.userId, {
-            attributes: { exclude: ['password'] },
-        });
+        const user = await User.findById(decoded.userId).select('-password');
 
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
