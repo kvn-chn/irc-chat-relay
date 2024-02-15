@@ -19,12 +19,12 @@ function App() {
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/chatrooms" element={<ChatRooms />} />
       </Routes>
-      <ToastContainer 
-        position="top-center" 
-        autoClose={2500} 
-        theme="colored" 
-        newestOnTop={true} 
-        pauseOnHover={false} 
+      <ToastContainer
+        position="top-center"
+        autoClose={2500}
+        theme="colored"
+        newestOnTop={true}
+        pauseOnHover={false}
         closeOnClick
       />
     </Router>

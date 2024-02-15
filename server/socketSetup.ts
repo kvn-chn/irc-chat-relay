@@ -81,6 +81,8 @@ const socketSetup = (server: HttpServer) => {
               break;
 
             case '/users':
+              break;
+
             case '/msg':
               const receiverUsername = data.message.split(' ')[1];
 
@@ -144,11 +146,11 @@ const socketSetup = (server: HttpServer) => {
     
       socket.on('typing', (username: string) => {
         socket.broadcast.emit('typing', username);
-      })
+      });
     
       socket.on('stopTyping', (username: string) => {
         socket.broadcast.emit('stopTyping', username);
-      })
+      });
       
       socket.on('disconnect', function () {
         const username = activeUsers.get(socket.id);

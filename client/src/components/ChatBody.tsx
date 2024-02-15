@@ -24,9 +24,7 @@ const ChatBody = ({
 }) => {
   //const [messages, setMessages] = useState<Data[]>([]);
   const socket = getSocket();
-
   const username = localStorage.getItem("username");
-  console.log(selectedChannel);
 
   useEffect(() => {
     socket.on("message", (data: Data) => {
@@ -93,7 +91,7 @@ const ChatBody = ({
         <div>
           {!selectedChannel && (
             <div className="flex justify-center items-center h-[85vh]">
-              <h1 className="text-3xl font-bold text-black dark:text-[#09ebe3]">
+              <h1 className="text-3xl mx-2 text-center font-bold text-black dark:text-[#09ebe3]">
                 Select a channel to start chatting
               </h1>
             </div>

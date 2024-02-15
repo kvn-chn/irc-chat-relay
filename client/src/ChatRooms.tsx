@@ -32,13 +32,25 @@ const ChatRooms = () => {
 
     if (!isConnected()) {
       logOut();
-      socket.emit("disconnect");
+      if (socket) socket.emit("disconnect");
     }
 
-    socket.on("connect", () => {
-      console.log("Connected to server:", socket.id);
-    });
+    if (socket) {
+      socket.on("connect", () => {
+        console.log("Connected to server:", socket.id);
+      });
+    }
+
+    return () => {
+      if (socket) socket.disconnect();
+    };
   }, []);
+
+  useEffect(() => {
+    if (!connected) {
+      logOut();
+    }
+  }, [connected]);
 
   const logOut = () => {
     disconnect();
@@ -97,9 +109,7 @@ const ChatRooms = () => {
             <ActiveUser />
           </div>
         </div>
-      ) : (
-        <App />
-      )}
+      ) : null}
     </div>
   );
 };
