@@ -3,7 +3,13 @@ import { toast } from "react-toastify";
 import { createChannel } from "../apiCalls";
 import { getSocket } from "../socket";
 
-const Channel = ({ selectedChannel, setSelectedChannel }) => {
+const Channel = ({
+  selectedChannel,
+  setSelectedChannel,
+}: {
+  selectedChannel: string | null;
+  setSelectedChannel: (channel: string | null) => void;
+}) => {
   const [channels, setChannels] = useState<string[]>([]);
   const [newChannel, setNewChannel] = useState("");
   //const [selectedChannel, setSelectedChannel] = useState(null);

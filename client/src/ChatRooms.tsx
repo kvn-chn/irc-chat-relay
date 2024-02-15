@@ -9,13 +9,21 @@ import Channel from "./components/Channel";
 import ThemeButton from "./components/ThemeButton";
 import { useNavigate } from "react-router-dom";
 
+interface Data {
+  sender?: string;
+  receiver?: string | null;
+  message: string;
+  createdAt: string;
+  channel: string;
+}
+
 const ChatRooms = () => {
   const [connected, setConnected] = useState(isConnected());
   const username = localStorage.getItem("username");
 
-  const [selectedChannel, setSelectedChannel] = useState(null);
+  const [selectedChannel, setSelectedChannel] = useState<string | null>(null);
 
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<Data[]>([]);
 
   const navigate = useNavigate();
 
@@ -81,12 +89,7 @@ const ChatRooms = () => {
                 setMessages={setMessages}
               />
               <div className="mt-2 p-2">
-                <Input
-                  selectedChannel={selectedChannel}
-                  setSelectedChannel={setSelectedChannel}
-                  messages={messages}
-                  setMessages={setMessages}
-                />
+                <Input selectedChannel={selectedChannel} />
               </div>
             </div>
           </div>

@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import { getSocket } from "../socket";
 
 const ActiveUser = () => {
-  const [activeUsers, setActiveUsers] = useState([]);
+  const [activeUsers, setActiveUsers] = useState<
+    { name: string; color: string }[]
+  >([]);
   const socket = getSocket();
 
   const colors = [
@@ -24,7 +26,7 @@ const ActiveUser = () => {
   useEffect(() => {
     socket.on("activeUsers", (activeUsersArray) => {
       // Map each user to an object containing their name and a random color
-      const usersWithColors = activeUsersArray.map((user) => {
+      const usersWithColors = activeUsersArray.map((user: string) => {
         // Check if the user already exists in the state
         const existingUser = activeUsers.find((u) => u.name === user);
 

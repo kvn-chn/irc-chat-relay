@@ -1,12 +1,7 @@
 import { useState } from "react";
 import { getSocket } from "../socket";
 
-const Input = ({
-  selectedChannel,
-  setSelectedChannel,
-  messages,
-  setMessages,
-}) => {
+const Input = ({ selectedChannel }: { selectedChannel: string | null }) => {
   const [message, setMessage] = useState("");
   const socket = getSocket();
   const username = localStorage.getItem("username");
