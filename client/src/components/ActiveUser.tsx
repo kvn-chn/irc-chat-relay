@@ -71,7 +71,7 @@ const ActiveUser = () => {
   }, [socket, activeUsers]);
 
   return (
-    <div className="flex flex-col text-center gap-y-4">
+    <div className="flex flex-col text-center gap-y-2">
       <h2 className="mt-4 text-3xl font-bold">Active Users</h2>
       <div className="border-b border-gray-700 p-2 flex items-center gap-2"></div>
       {activeUsers.map((user, index) => (

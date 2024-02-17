@@ -89,7 +89,7 @@ const ChatBody = ({
 
   return (
     <>
-      <div className="h-[85vh] w-full bg-neutral-200 text-black dark:text-[#09ebe3] dark:bg-[#043a44] border border-y-black flex flex-col-reverse -auto overflow-x-hidden scrollbar-thin dark:scrollbar-track-[#09ebe42a] dark:scrollbar-thumb-[#09ebe3]">
+      <div className="h-[85vh] w-full bg-neutral-200 text-black dark:text-[#09ebe3] dark:bg-[#043a44] border border-black flex flex-col-reverse -auto overflow-x-hidden scrollbar-thin dark:scrollbar-track-[#09ebe42a] dark:scrollbar-thumb-[#09ebe3]">
         <div>
           {!selectedChannel && (
             <div className="flex justify-center items-center h-[85vh]">

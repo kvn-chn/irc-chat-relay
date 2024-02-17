@@ -58,7 +58,7 @@ const ChatRooms = () => {
           <div className="w-3/5 my-2 flex flex-col text-black dark:text-[#09ebe3] dark:bg-[#05323a] bg-white rounded justify-center items-start">
             <div className="flex justify-between w-full px-2 pt-2">
               <h1 className="text-3xl font-bold text-black dark:text-[#09ebe3]">
-                Welcome {username}
+                {username}
               </h1>
 
               <div>
