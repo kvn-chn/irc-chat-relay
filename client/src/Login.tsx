@@ -4,6 +4,7 @@ import App from "./App";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { login } from "./apiCalls";
+import StarCanvas from "./components/Stars";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -52,7 +53,7 @@ const Login = () => {
   return (
     <>
       {!connected ? (
-        <div className="flex flex-col justify-center items-center h-[100vh] bg-[#03252b]">
+        <div className="flex flex-col justify-center items-center h-[100vh] ">
           <div className="flex flex-col bg-[#05323a] rounded-lg py-20 px-20 shadow-md">
             <h1 className="text-5xl font-bold text-white text-center mb-10">
               Login
