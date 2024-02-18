@@ -21,11 +21,15 @@ const socketSetup = (server: HttpServer) => {
     });
 
     const activeUsers = new Map<string, string>();
+    const activeUsersOnChannels = new Map<string, string[]>();
 
     socketIO.on('connection', (socket: Socket) => {    
       socket.on('newUser', function (username) {
         console.log("user ".concat(username, " just connected!"));
         activeUsers.set(socket.id, username);
+
+        activeUsersOnChannels.set(username, []);
+
         socket.broadcast.emit('userJoined', username);
         console.log('Current users:', activeUsers);
     
@@ -50,6 +54,14 @@ const socketSetup = (server: HttpServer) => {
           switch (command) {
             case '/nick':
 
+              const userId = await getUser(data.sender)._id;
+              const newUsername = data.message.split(' ')[1];
+              const activeUsersArray = Array.from(activeUsers.values());
+
+              activeUsers.set(socket.id, newUsername);
+              console.log('activeUsers : ',activeUsers);
+              socket.emit('serverResponse', 'Username updated');
+              socket.broadcast.emit('activeUsers', activeUsersArray);
 
               /* const userId = data.id;
               const newUsername = data.message.split(' ')[1];
@@ -62,25 +74,45 @@ const socketSetup = (server: HttpServer) => {
               break;
     
             case '/list':
+              var channels = Array.from(activeUsersOnChannels.keys());
+              socket.emit('serverResponse', `Channels: ${channels.join(', ')}`);
+              break;
             case '/delete':
+
             case '/join':
-              const receiveChannel = data.message.split(' ')[1];
-              
-              socket.join(receiveChannel);
+              var channelName = data.message.split(' ')[1];
+              var username = activeUsers.get(socket.id) as string; // Add type assertion to ensure username is of type string
+              var channels = activeUsersOnChannels.get(username) || []; // Initialize with an empty array if undefined
+              channels.push(channelName);
+              activeUsersOnChannels.set(username, channels);   
+              console.log('haaaaa : ',activeUsersOnChannels);           
+              socket.join(channelName);
               console.log('user has joined');
-              socket.emit('joinChannel', receiveChannel);
+              socket.emit('joinChannel', channelName);
               break;
 
             case '/quit':
-              const username = activeUsers.get(socket.id);
-              const channelName = data.message.split(' ')[1] || data.channel;
+              var channelName = data.message.split(' ')[1] || data.channel;
+              var username = activeUsers.get(socket.id) as string;
+              var channels = activeUsersOnChannels.get(username) || [];
 
+              const index = channels.indexOf(channelName);
+              if (index !== -1) {
+                channels.splice(index, 1);
+              }
+
+              activeUsersOnChannels.set(username, channels);
+              console.log('hooooooo : ',activeUsersOnChannels);
               console.log(`User ${username} has quit.`);
               socket.leave(channelName);
               socket.emit('leaveChannel', channelName);
               break;
 
             case '/users':
+              const channel = data.message.split(' ')[1];
+              const users = getUsersInChannel(channel);
+              console.log(`Users in channel ${channel} :`, users);
+              socket.emit('activeUsersOnChannels', users);
               break;
 
             case '/msg':
@@ -118,6 +150,7 @@ const socketSetup = (server: HttpServer) => {
               break;
     
             case '/help':
+              socket.emit('serverResponse', 'Available commands: /nick, /list, /delete, /join, /quit, /users, /msg, /help');
               break;
               
             default:
@@ -159,10 +192,21 @@ const socketSetup = (server: HttpServer) => {
         console.log('Current users:', activeUsers);
         socket.emit('userLeft', username);
         const activeUsersArray = Array.from(activeUsers.values());
+        activeUsersOnChannels.delete(username);
+        console.log('Active users array:', activeUsersOnChannels);
         socket.emit('activeUsers', activeUsersArray);
         socket.broadcast.emit('activeUsers', activeUsersArray);
+        socket.emit('activeUsersOnChannels', activeUsersOnChannels);
+        socket.broadcast.emit('activeUsersOnChannels', activeUsersOnChannels);
       });
     });
+
+    function getUsersInChannel(channelName: string) {
+      return Array.from(activeUsersOnChannels.entries())
+        .filter(([username, channels]) => channels.includes(channelName))
+        .map(([username, channels]) => username);
+    }
 }
+
 
 module.exports = socketSetup;

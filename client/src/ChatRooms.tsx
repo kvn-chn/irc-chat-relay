@@ -63,7 +63,7 @@ const ChatRooms = () => {
     <div className="scrollbar-thin dark:scrollbar-track-[#09ebe42a] dark:scrollbar-thumb-[#09ebe3]">
       {connected ? (
         <div className="flex bg-black h-screen">
-          <div className="w-1/5 m-2 text-black dark:text-[#09ebe3] dark:bg-[#03252b] bg-white rounded flex flex-col justify-center">
+          <div className="w-1/5 m-2 text-black dark:text-[#09ebe3] dark:bg-[#03252b] bg-white rounded">
             <Channel
               selectedChannel={selectedChannel}
               setSelectedChannel={setSelectedChannel}
@@ -71,9 +71,9 @@ const ChatRooms = () => {
           </div>
 
           <div className="w-3/5 my-2 flex flex-col text-black dark:text-[#09ebe3] dark:bg-[#05323a] bg-white rounded justify-center items-start">
-            <div className="flex justify-between w-full px-2">
+            <div className="flex justify-between w-full px-2 pt-2">
               <h1 className="text-3xl font-bold text-black dark:text-[#09ebe3]">
-                Welcome {username}
+                {username}
               </h1>
 
               <div className="flex items-center">
@@ -95,8 +95,13 @@ const ChatRooms = () => {
                 messages={messages}
                 setMessages={setMessages}
               />
-              <div className="mt-2 p-2">
-                <Input selectedChannel={selectedChannel} />
+              <div className="mt-1 p-2">
+                <Input
+                  selectedChannel={selectedChannel}
+                  setSelectedChannel={setSelectedChannel}
+                  messages={messages}
+                  setMessages={setMessages}
+                />
               </div>
             </div>
           </div>
