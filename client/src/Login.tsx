@@ -4,7 +4,6 @@ import App from "./App";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { login } from "./apiCalls";
-import StarCanvas from "./components/Stars";
 
 const Login = () => {
   const [username, setUsername] = useState("");

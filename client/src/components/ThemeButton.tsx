@@ -32,8 +32,7 @@ const ThemeButton = () => {
       onClick={changeTheme}
     >
       <img
-        width={25}
-        height={25}
+        className="w-6 h-6"
         src={`/assets/${darkTheme ? "dark" : "light"}_mode.png`}
       />
     </button>
