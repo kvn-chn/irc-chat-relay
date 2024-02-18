@@ -62,15 +62,6 @@ const socketSetup = (server: HttpServer) => {
               console.log('activeUsers : ',activeUsers);
               socket.emit('serverResponse', 'Username updated');
               socket.broadcast.emit('activeUsers', activeUsersArray);
-
-              /* const userId = data.id;
-              const newUsername = data.message.split(' ')[1];
-              const activeUsersArray = Array.from(activeUsers.values());
-    
-              activeUsers.set(userId, newUsername);
-    
-              socket.emit('serverResponse', 'Username updated');
-              socket.broadcast.emit('activeUsers', activeUsersArray); */
               break;
     
             case '/list':
@@ -120,25 +111,24 @@ const socketSetup = (server: HttpServer) => {
 
               const senderUsername = data.sender;
               const receiverSocketId = Array.from(activeUsers.entries()).find(([id, username]) => username === receiverUsername)?.[0];
-            
               if (receiverSocketId) {
                 const receiverSocket = socketIO.sockets.sockets.get(receiverSocketId);
                 const privateMessage = data.message.split(' ').slice(2).join(' ');
             
                 if (receiverSocket) {
                   const message: Data = { sender: senderUsername, message: privateMessage, receiver: receiverUsername, createdAt: `${currentTime}`, channel: data.channel};
-                  socket.emit('message', message);
+                  //socket.emit('message', message);
                   receiverSocket.to(data.channel).emit('message', message);
 
-                  const receiverId = await getUser(receiverUsername)._id;
-                  const senderId = await getUser(senderUsername)._id;
-                  const channelId = await getChannel(data.channel)._id;
+                  const receiverId = await getUser(receiverUsername);
+                  const senderId = await getUser(data.sender);
+                  const channelId = await getChannel(data.channel);
 
                   await Message.create({
-                    senderId,
-                    receiverId,
+                    senderId: senderId._id,
+                    receiverId: receiverId._id,
                     message:privateMessage,
-                    channelId
+                    channelId: channelId._id
                   })
 
                 } else {
@@ -150,7 +140,7 @@ const socketSetup = (server: HttpServer) => {
               break;
     
             case '/help':
-              socket.emit('serverResponse', 'Available commands: /nick, /list, /delete, /join, /quit, /users, /msg, /help');
+              socket.emit('showCommands', 'Available commands: /nick, /list, /delete, /join, /quit, /users, /msg, /help');
               break;
               
             default:
@@ -179,11 +169,11 @@ const socketSetup = (server: HttpServer) => {
     
       socket.on('typing', (username: string) => {
         socket.broadcast.emit('typing', username);
-      });
+      })
     
       socket.on('stopTyping', (username: string) => {
         socket.broadcast.emit('stopTyping', username);
-      });
+      })
       
       socket.on('disconnect', function () {
         const username = activeUsers.get(socket.id);

@@ -39,23 +39,21 @@ const ActiveUser = () => {
         };
       });
 
-      setActiveUsers(usersWithColors); // Update the state with the received active users array
+      setActiveUsers(usersWithColors);
     });
 
     return () => {
       socket.off("activeUsers");
     };
-  }, [socket, activeUsers]); // Include socket and activeUsers in the dependency array
+  }, [socket, activeUsers]);
  */
   useEffect(() => {
     socket.on("activeUsersOnChannels", (message) => {
       console.log(message);
       
       const usersWithColors = message.map((user) => {
-        // Check if the user already exists in the state
         const existingUser = activeUsers.find((u) => u.name === user);
 
-        // If the user exists, keep their color, otherwise assign a new color
         const color = existingUser ? existingUser.color : getRandomColor();
 
         return {
@@ -64,7 +62,7 @@ const ActiveUser = () => {
         };
       });
 
-      setActiveUsers(usersWithColors); // Update the state with the received active users array
+      setActiveUsers(usersWithColors);
     });
 
     return () => {

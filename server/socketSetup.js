@@ -94,14 +94,6 @@ var socketSetup = function (server) {
                         console.log('activeUsers : ', activeUsers);
                         socket.emit('serverResponse', 'Username updated');
                         socket.broadcast.emit('activeUsers', activeUsersArray);
-                        /* const userId = data.id;
-                        const newUsername = data.message.split(' ')[1];
-                        const activeUsersArray = Array.from(activeUsers.values());
-              
-                        activeUsers.set(userId, newUsername);
-              
-                        socket.emit('serverResponse', 'Username updated');
-                        socket.broadcast.emit('activeUsers', activeUsersArray); */
                         return [3 /*break*/, 18];
                     case 3:
                         channels = Array.from(activeUsersOnChannels.keys());
@@ -152,20 +144,20 @@ var socketSetup = function (server) {
                         message = { sender: senderUsername, message: privateMessage, receiver: receiverUsername_1, createdAt: "".concat(currentTime), channel: data.channel };
                         socket.emit('message', message);
                         receiverSocket.to(data.channel).emit('message', message);
-                        return [4 /*yield*/, getUser(receiverUsername_1)._id];
+                        return [4 /*yield*/, getUser(receiverUsername_1)];
                     case 8:
                         receiverId = _c.sent();
-                        return [4 /*yield*/, getUser(senderUsername)._id];
+                        return [4 /*yield*/, getUser(data.sender)];
                     case 9:
                         senderId = _c.sent();
-                        return [4 /*yield*/, getChannel(data.channel)._id];
+                        return [4 /*yield*/, getChannel(data.channel)];
                     case 10:
                         channelId = _c.sent();
                         return [4 /*yield*/, Message.create({
-                                senderId: senderId,
-                                receiverId: receiverId,
+                                senderId: senderId._id,
+                                receiverId: receiverId._id,
                                 message: privateMessage,
-                                channelId: channelId
+                                channelId: channelId._id
                             })];
                     case 11:
                         _c.sent();
@@ -179,7 +171,7 @@ var socketSetup = function (server) {
                         _c.label = 15;
                     case 15: return [3 /*break*/, 18];
                     case 16:
-                        socket.emit('serverResponse', 'Available commands: /nick, /list, /delete, /join, /quit, /users, /msg, /help');
+                        socket.emit('showCommands', 'Available commands: /nick, /list, /delete, /join, /quit, /users, /msg, /help');
                         return [3 /*break*/, 18];
                     case 17:
                         socket.emit('serverResponse', "Command doesn't exist");

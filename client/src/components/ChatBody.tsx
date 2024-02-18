@@ -50,6 +50,10 @@ const ChatBody = ({
       toast.success(message);
     });
 
+    socket.on('showCommands' , (message) => {
+      toast.info(message);
+    });
+
     return () => {
       socket.off("message");
       socket.off("serverResponse");
