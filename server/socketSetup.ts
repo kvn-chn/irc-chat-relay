@@ -98,7 +98,7 @@ const socketSetup = (server: HttpServer) => {
                 if (receiverSocket) {
                   const message: Data = { sender: senderUsername, message: privateMessage, receiver: receiverUsername, createdAt: `${currentTime}`, channel: data.channel};
                   socket.emit('message', message);
-                  receiverSocket.emit('message', message);
+                  receiverSocket.to(data.channel).emit('message', message);
 
                   const receiverId = await getUser(receiverUsername);
                   const senderId = await getUser(senderUsername);
@@ -144,7 +144,6 @@ const socketSetup = (server: HttpServer) => {
 
           socket.emit('message', data);
           socket.to(data.channel).emit('message', data);
-          //socket.to(data.channel).broadcast.emit('message', data);
         }
       });
     
