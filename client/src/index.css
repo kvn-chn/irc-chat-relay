@@ -9,7 +9,7 @@ body {
       sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #05323a;
+    background-color: black;
     color: #09ebe3;
   }
   ::placeholder{
