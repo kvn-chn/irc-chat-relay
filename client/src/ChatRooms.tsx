@@ -48,14 +48,10 @@ const ChatRooms = () => {
   const logOut = () => {
     disconnect();
     toast.success("Logged out");
-    // localStorage.removeItem("username");
-    // localStorage.removeItem("userId");
+    localStorage.removeItem("username");
+    localStorage.removeItem("userId");
     setConnected(isConnected());
     navigate("/");
-    /*axios.post("/logout").then(() => {
-      setId(null);
-      setUsername(null);
-    });*/
   };
 
   return (
